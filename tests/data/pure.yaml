@@ -1,0 +1,15 @@
+version: 3
+
+package:
+  name: foo
+  version: "1.0.0"
+
+test:
+  requires:
+    - pip
+    - pytest
+  command:
+    - pytest foo
+
+key-extra:
+  - bar

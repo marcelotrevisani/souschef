@@ -1,0 +1,14 @@
+[run]
+source=src/masterchef
+omit =
+    .cache/*
+    */tests/*
+    docs/*
+    .pytest_cache/*
+    setup.py
+    _version.py
+    masterchef.egg-info/*
+    .github/*
+
+[paths]
+source = src/masterchef
