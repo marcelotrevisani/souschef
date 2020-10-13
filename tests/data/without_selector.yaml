@@ -1,0 +1,5 @@
+foo_section:
+  bar_section:
+    - val1
+    - val2
+foo_bar: 1
