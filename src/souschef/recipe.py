@@ -24,18 +24,7 @@ class Recipe(mixins.GetSetAttrMixin, mixins.GetSetItemMixin, mixins.InlineCommen
             self._yaml = self.__create_yaml(name, version)
 
     def __repr__(self) -> str:
-        pkg = self._yaml.get("package", {})
-        result = f"<Recipe name={pkg.get('name', None)}"
-        if pkg.get("version", None):
-            result += f", version={pkg.get('version', None)}"
-        return result + ">"
-
-    def __str__(self) -> str:
-        pkg = self._yaml.get("package", {})
-        result_str = f"{pkg.get('name', None)}"
-        if pkg.get("version", None):
-            result_str += f"={pkg.get('version', None)}"
-        return result_str
+        return f"{str([s for s in self])}"
 
     def __create_yaml(self, name: str, version: Optional[str] = None):
         return yaml.load(
@@ -52,9 +41,3 @@ class Recipe(mixins.GetSetAttrMixin, mixins.GetSetItemMixin, mixins.InlineCommen
     def __load_recipe(self, path_recipe: Path):
         with open(path_recipe, "r") as yaml_file:
             return yaml.load(yaml_file)
-
-    def __iter__(self):
-        pass
-
-    def __len__(self) -> int:
-        return len(self._yaml)

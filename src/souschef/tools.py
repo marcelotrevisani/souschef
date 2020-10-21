@@ -15,7 +15,7 @@ def convert_to_abstract_repr(
     if isinstance(item, CommentedSeq):
         from souschef.ingredient import IngredientList
 
-        list_values = IngredientList(parent_yaml=item)
+        list_values = IngredientList(parent_yaml=item, key=name)
         for pos, single_value in enumerate(item):
             if isinstance(single_value, CommentedMap):
                 list_values.append(Section(name=pos, item=single_value, parent=item))

@@ -1,6 +1,9 @@
 import re
 from typing import Any, List, Union
 
+from ruamel.yaml.comments import CommentedMap, CommentedSeq
+
+from souschef.comment import comment_factory
 from souschef.tools import convert_to_abstract_repr
 
 
@@ -82,12 +85,78 @@ class ConstrainMixin:
         self._yaml()[self._id] = f"{pkg} {values.strip()}".strip()
 
 
+def _get_elements_and_comments(yaml) -> List:
+    if not yaml:
+        return []
+    result = []
+    for key, value in yaml.items():
+        result.append(convert_to_abstract_repr(value, key, yaml))
+        comment_token = yaml.ca.items.get(key, None)
+        if comment_token is None:
+            continue
+        if isinstance(value, (CommentedMap, CommentedSeq)):
+            result.extend(_get_last_section_comment(yaml, key))
+        else:
+            list_comment = (
+                comment_token[3] if comment_token[2] is None else comment_token[2]
+            )
+            start_inline = comment_token[2] is not None
+            if not isinstance(list_comment, list):
+                list_comment = [list_comment]
+            for comment in list_comment:
+                result.extend(comment_factory(comment, start_inline))
+    return result
+
+
+def _get_last_section_comment(yaml, key) -> List:
+    value = yaml[key]
+    if isinstance(value, CommentedMap):
+        last_key = next(reversed(value))
+        return _get_last_section_comment(value, last_key)
+    elif isinstance(value, CommentedSeq):
+        last_pos = max(len(value) - 1, 0)
+        val = value.ca.items.get(last_pos, None)[0]
+        try:
+            return comment_factory(val, True)
+        except AttributeError:
+            return []
+    else:
+        try:
+            val = yaml.ca.items.get(key, None)[2]
+            start_inline_comment = not val.value.startswith("\n")
+            return comment_factory(val, start_inline_comment)
+        except (AttributeError, KeyError, TypeError):
+            return []
+
+
+def _get_list_repr(yaml) -> List:
+    result = _get_root_comments(yaml)
+    result.extend(_get_elements_and_comments(yaml))
+    return result
+
+
+def _get_root_comments(yaml) -> List:
+    try:
+        all_comments = yaml.ca.comment[1]
+    except (KeyError, AttributeError):
+        all_comments = []
+    if all_comments is None:
+        all_comments = []
+    result = []
+    for comment in all_comments:
+        result.extend(comment_factory(comment))
+    return result
+
+
 class GetSetItemMixin:
     def __getitem__(self, item):
         try:
             yaml = self._yaml()
         except TypeError:
             yaml = self._yaml
+
+        if isinstance(item, int):
+            return _get_list_repr(yaml)[item]
 
         recipe_item = yaml.get(item, None)
         if recipe_item is None:

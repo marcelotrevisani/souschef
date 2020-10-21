@@ -1,0 +1,27 @@
+# init
+# before version comment
+version: 3  # version inline comment
+# after version
+
+# comment between
+
+# comment before req
+requirements:  # req inline comment
+    # comment after requirements
+    host: # host comment
+    # before val1
+        - val1  # val1 comment inline
+        # after val1
+        - val2  # val2 comment inline
+        - val3
+        # after val3
+# after req
+
+key_without:
+    # after key_without - before list
+    - ab
+    - cd
+# entire section key_without
+
+other_final: 1
+# FINAL

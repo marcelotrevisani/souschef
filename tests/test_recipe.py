@@ -1,3 +1,4 @@
+import pytest
 from ruamel.yaml import round_trip_dump
 
 from souschef.recipe import Recipe
@@ -96,7 +97,7 @@ def test_inline_comment(path_data, tmpdir):
     recipe["foo_section"]["bar_section"][0].inline_comment = "INLINE VAL1"
     assert recipe["foo_section"]["bar_section"][0].inline_comment == "# INLINE VAL1"
 
-    output_folder = tmpdir.mkdir("inline-comment-output")
+    output_folder = tmpdir.mkdir("inline-comment.yaml-output")
     with open(output_folder / "output_constrain.yaml", "w") as f:
         round_trip_dump(recipe._yaml, f)
 
@@ -111,3 +112,23 @@ def test_inline_comment(path_data, tmpdir):
 foo_bar: 1
 """
     )
+
+
+@pytest.fixture
+def comment_yaml(path_data):
+    return Recipe(load_file=path_data / "comment.yaml")
+
+
+def test_comment(comment_yaml, tmpdir):
+    assert comment_yaml[0].raw_value == "# init"
+    assert comment_yaml[0].raw_value == "# init"
+    assert str(comment_yaml[0]) == "init"
+    assert comment_yaml[0].value == "init"
+    assert comment_yaml[1].raw_value == "# before version comment"
+    assert comment_yaml[2].value == 3
+    assert comment_yaml[3].raw_value == "# after version"
+
+
+def test_list_repr_str(comment_yaml):
+    assert repr(comment_yaml[-3]) == "key_without: ['ab', 'cd']"
+    assert str(comment_yaml[-3]) == "['ab', 'cd']"

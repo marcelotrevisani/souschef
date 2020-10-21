@@ -1,5 +1,5 @@
 import weakref
-from typing import Any
+from typing import Any, Union
 
 from souschef import mixins
 
@@ -10,7 +10,7 @@ class Ingredient(mixins.SelectorMixin, mixins.InlineCommentMixin):
         self._id = position
 
     def __repr__(self) -> str:
-        return str(self.value)
+        return f"{self._id}: {str(self.value)}"
 
     @property
     def value(self) -> Any:
@@ -27,11 +27,15 @@ class Ingredient(mixins.SelectorMixin, mixins.InlineCommentMixin):
 
 
 class IngredientList(list, mixins.SelectorMixin, mixins.InlineCommentMixin):
-    def __init__(self, parent_yaml, *args):
+    def __init__(self, parent_yaml, key: Union[int, str], *args):
+        self._key = key
         self._yaml = weakref.ref(parent_yaml)
         super(IngredientList, self).__init__(args)
 
     def __repr__(self) -> str:
+        return f"{self._key}: {str(self)}"
+
+    def __str__(self) -> str:
         return str([elem.value for elem in self])
 
     def __eq__(self, other) -> bool:

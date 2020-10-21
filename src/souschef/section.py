@@ -18,15 +18,15 @@ class Section(
         self._name = name
 
     def __repr__(self) -> str:
-        return f"<Section name={self._name}>"
+        return f"<Section {self._name}>"
 
     def __str__(self) -> str:
         return self._name
 
     @property
-    def values(self) -> Union[None, "Section"]:
-        return
+    def value(self):
+        return [v for v in self]
 
-    @values.setter
-    def values(self, items: Union[None, "Section", str]):
+    @value.setter
+    def value(self, items: Union[None, "Section", str]):
         pass
