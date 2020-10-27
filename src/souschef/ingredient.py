@@ -26,11 +26,12 @@ class Ingredient(mixins.SelectorMixin, mixins.InlineCommentMixin):
         return self.value == other
 
 
-class IngredientList(list, mixins.SelectorMixin, mixins.InlineCommentMixin):
-    def __init__(self, parent_yaml, key: Union[int, str], *args):
+class IngredientList(
+    mixins.SelectorMixin, mixins.InlineCommentMixin, mixins.GetSetItemMixin, list
+):
+    def __init__(self, parent_yaml, key: Union[int, str]):
         self._key = key
         self._yaml = weakref.ref(parent_yaml)
-        super(IngredientList, self).__init__(args)
 
     def __repr__(self) -> str:
         return f"{self._key}: {str(self)}"
@@ -46,5 +47,9 @@ class IngredientList(list, mixins.SelectorMixin, mixins.InlineCommentMixin):
                 return False
         return True
 
-    def __setitem__(self, key, value):
-        self._yaml()[key] = value
+    def insert(self, index: int, value: Any) -> None:
+        # TODO: test if starts with '#' to be interpreted as a comment
+        #  or if it is a Comment
+        #  need to analyze if it is the first element to insert the
+        #  comment after the last comment of the key
+        self._yaml().insert(index, value)

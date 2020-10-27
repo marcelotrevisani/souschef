@@ -44,6 +44,11 @@ class Comment:
         all_values[self.__pos] = new_value
         self._yaml.value = f"{self.NEW_LINE.join(all_values)}\n"
 
+    def remove(self):
+        all_values = self._yaml.value.split(self.NEW_LINE)
+        del all_values[self.__pos]
+        self._yaml.value = f"{self.NEW_LINE.join(all_values)}"
+
     def __repr__(self) -> str:
         return self.raw_value
 

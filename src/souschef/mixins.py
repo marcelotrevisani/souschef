@@ -89,7 +89,11 @@ def _get_elements_and_comments(yaml) -> List:
     if not yaml:
         return []
     result = []
-    for key, value in yaml.items():
+    if isinstance(yaml, CommentedSeq):
+        zip_val = enumerate(yaml)
+    else:
+        zip_val = yaml.items()
+    for key, value in zip_val:
         result.append(convert_to_abstract_repr(value, key, yaml))
         comment_token = yaml.ca.items.get(key, None)
         if comment_token is None:
@@ -113,20 +117,19 @@ def _get_last_section_comment(yaml, key) -> List:
     if isinstance(value, CommentedMap):
         last_key = next(reversed(value))
         return _get_last_section_comment(value, last_key)
-    elif isinstance(value, CommentedSeq):
+    if isinstance(value, CommentedSeq):
         last_pos = max(len(value) - 1, 0)
-        val = value.ca.items.get(last_pos, None)[0]
+        val = value.ca.items.get(last_pos, None)
         try:
-            return comment_factory(val, True)
-        except AttributeError:
+            return comment_factory(val[0], True)
+        except (AttributeError, IndexError):
             return []
-    else:
-        try:
-            val = yaml.ca.items.get(key, None)[2]
-            start_inline_comment = not val.value.startswith("\n")
-            return comment_factory(val, start_inline_comment)
-        except (AttributeError, KeyError, TypeError):
-            return []
+    try:
+        val = yaml.ca.items.get(key, None)[2]
+        start_inline_comment = not val.value.startswith("\n")
+        return comment_factory(val, start_inline_comment)
+    except (AttributeError, KeyError, TypeError):
+        return []
 
 
 def _get_list_repr(yaml) -> List:
@@ -138,7 +141,7 @@ def _get_list_repr(yaml) -> List:
 def _get_root_comments(yaml) -> List:
     try:
         all_comments = yaml.ca.comment[1]
-    except (KeyError, AttributeError):
+    except (KeyError, AttributeError, TypeError):
         all_comments = []
     if all_comments is None:
         all_comments = []
@@ -150,10 +153,7 @@ def _get_root_comments(yaml) -> List:
 
 class GetSetItemMixin:
     def __getitem__(self, item):
-        try:
-            yaml = self._yaml()
-        except TypeError:
-            yaml = self._yaml
+        yaml = self._get_yaml()
 
         if isinstance(item, int):
             return _get_list_repr(yaml)[item]
@@ -163,12 +163,23 @@ class GetSetItemMixin:
             return None
         return convert_to_abstract_repr(recipe_item, item, yaml)
 
-    def __setitem__(self, key, value):
+    def _get_yaml(self):
         try:
-            yaml = self._yaml()
+            return self._yaml()
         except TypeError:
-            yaml = self._yaml
+            return self._yaml
+
+    def __setitem__(self, key, value):
+        yaml = self._get_yaml()
         yaml[key] = value
+
+    def __delitem__(self, key):
+        from souschef.comment import Comment
+
+        if isinstance(self[key], Comment):
+            self[key].remove()
+        else:
+            del self._get_yaml()[key]
 
 
 class GetSetAttrMixin:

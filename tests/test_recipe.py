@@ -119,7 +119,7 @@ def comment_yaml(path_data):
     return Recipe(load_file=path_data / "comment.yaml")
 
 
-def test_comment(comment_yaml, tmpdir):
+def test_comment(comment_yaml):
     assert comment_yaml[0].raw_value == "# init"
     assert comment_yaml[0].raw_value == "# init"
     assert str(comment_yaml[0]) == "init"
@@ -129,6 +129,14 @@ def test_comment(comment_yaml, tmpdir):
     assert comment_yaml[3].raw_value == "# after version"
 
 
+def test_delete_comment(comment_yaml):
+    assert comment_yaml[0].raw_value == "# init"
+    del comment_yaml[0]
+    assert comment_yaml[0].raw_value == "# before version comment"
+
+
 def test_list_repr_str(comment_yaml):
-    assert repr(comment_yaml[-3]) == "key_without: ['ab', 'cd']"
-    assert str(comment_yaml[-3]) == "['ab', 'cd']"
+    assert repr(comment_yaml[-5]) == "key_without: ['ab', 'cd']"
+    assert str(comment_yaml[-5]) == "['ab', 'cd']"
+    assert comment_yaml[-5][1] == "ab"
+    assert comment_yaml[-5][2] == "cd"
