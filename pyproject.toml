@@ -1,5 +1,5 @@
 [tool.black]
-target-version=["py37", "py38"]
+target-version=["py37", "py38", "py39"]
 exclude='''
 /(
     \.eggs
@@ -22,4 +22,4 @@ requires = ["setuptools>=30.3.0", "wheel", "setuptools_scm"]
 build-backend = "setuptools.build_meta"
 
 [tools.setuptools_scm]
-write_to="src/masterchef/_version.py"
+write_to="src/souschef/_version.py"
