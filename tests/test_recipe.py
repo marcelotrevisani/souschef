@@ -7,21 +7,21 @@ from souschef.recipe import Recipe
 def test_load_pure_yaml_recipe(path_data):
     recipe = Recipe(load_file=path_data / "pure.yaml")
     assert recipe["test"].selector == "inline test selector"
-    recipe.test.requires.selector = "TESTING SELECTOR"
-    assert recipe.test.requires.selector == "TESTING SELECTOR"
-    assert recipe.version == 3
-    recipe.version.value = 4
+    recipe["test"]["requires"].selector = "TESTING SELECTOR"
+    assert recipe["test"]["requires"].selector == "TESTING SELECTOR"
+    assert recipe["version"] == 3
+    recipe["version"].value = 4
     assert recipe["version"] == 4
     recipe["version"] = 5
     assert recipe["version"] == 5
-    assert recipe.version == 5
-    assert recipe.package.name == "foo"
-    assert recipe.package.version == "1.0.0"
-    assert recipe.test.requires == ["pip", "pytest"]
-    assert len(recipe.test.requires) == 2
-    assert "pip" in recipe.test.requires
-    assert recipe.test.commands == ["pytest foo"]
-    assert recipe.key_extra == ["bar"]
+    assert recipe["version"] == 5
+    assert recipe["package"]["name"] == "foo"
+    assert recipe["package"]["version"] == "1.0.0"
+    assert recipe["test"]["requires"] == ["pip", "pytest"]
+    assert len(recipe["test"]["requires"]) == 2
+    assert "pip" in recipe["test"]["requires"]
+    assert recipe["test"]["commands"] == ["pytest foo"]
+    assert recipe["key-extra"] == ["bar"]
 
 
 def test_create_selector(path_data, tmpdir):
@@ -136,7 +136,12 @@ def test_delete_comment(comment_yaml):
 
 
 def test_list_repr_str(comment_yaml):
-    assert repr(comment_yaml[-5]) == "key_without: ['ab', 'cd']"
-    assert str(comment_yaml[-5]) == "['ab', 'cd']"
+    assert (
+        repr(comment_yaml[-5])
+        == "key_without: ['# after key_without - before list', 'ab', 'cd']"
+    )
+    assert str(comment_yaml[-5]) == "['# after key_without - before list', 'ab', 'cd']"
+    assert comment_yaml[-5][0] == "# after key_without - before list"
     assert comment_yaml[-5][1] == "ab"
     assert comment_yaml[-5][2] == "cd"
+    assert comment_yaml[-5] == ["# after key_without - before list", "ab", "cd"]

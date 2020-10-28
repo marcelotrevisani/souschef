@@ -158,7 +158,9 @@ class GetSetItemMixin:
         if isinstance(item, int):
             return _get_list_repr(yaml)[item]
 
-        recipe_item = yaml.get(item, None)
+        recipe_item = (
+            yaml.get(item, None) if isinstance(yaml, CommentedMap) else yaml[item]
+        )
         if recipe_item is None:
             return None
         return convert_to_abstract_repr(recipe_item, item, yaml)

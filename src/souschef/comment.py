@@ -50,10 +50,16 @@ class Comment:
         self._yaml.value = f"{self.NEW_LINE.join(all_values)}"
 
     def __repr__(self) -> str:
-        return self.raw_value
+        return repr(self.raw_value)
 
     def __str__(self) -> str:
-        return self.value
+        return str(self.value)
+
+    def __eq__(self, other: str) -> bool:
+        separated_comment = re.search(r"^\s*#\s*(.*)", other)
+        if separated_comment is None:
+            return self.value == other or self.raw_value == other
+        return self.value == separated_comment.group(1)
 
 
 def comment_factory(

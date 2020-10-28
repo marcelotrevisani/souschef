@@ -1,7 +1,9 @@
+import re
 import weakref
-from typing import Any, Union
+from typing import Any, Iterable, MutableSequence, Union
 
 from souschef import mixins
+from souschef.mixins import _get_list_repr
 
 
 class Ingredient(mixins.SelectorMixin, mixins.InlineCommentMixin):
@@ -10,7 +12,10 @@ class Ingredient(mixins.SelectorMixin, mixins.InlineCommentMixin):
         self._id = position
 
     def __repr__(self) -> str:
-        return f"{self._id}: {str(self.value)}"
+        return repr(self.value)
+
+    def __str__(self) -> str:
+        return str(self.value)
 
     @property
     def value(self) -> Any:
@@ -27,7 +32,10 @@ class Ingredient(mixins.SelectorMixin, mixins.InlineCommentMixin):
 
 
 class IngredientList(
-    mixins.SelectorMixin, mixins.InlineCommentMixin, mixins.GetSetItemMixin, list
+    mixins.SelectorMixin,
+    mixins.InlineCommentMixin,
+    mixins.GetSetItemMixin,
+    MutableSequence,
 ):
     def __init__(self, parent_yaml, key: Union[int, str]):
         self._key = key
@@ -37,19 +45,48 @@ class IngredientList(
         return f"{self._key}: {str(self)}"
 
     def __str__(self) -> str:
-        return str([elem.value for elem in self])
+        return str(_get_list_repr(self._yaml()))
 
     def __eq__(self, other) -> bool:
         if len(other) != len(self):
             return False
-        for ingredient, element in zip(self, other):
+        for ingredient, element in zip(_get_list_repr(self._yaml()), other):
             if ingredient != element:
                 return False
         return True
 
-    def insert(self, index: int, value: Any) -> None:
+    def __iter__(self) -> Iterable:
+        return iter(_get_list_repr(self._yaml()))
+
+    def __contains__(self, item) -> bool:
+        return item in _get_list_repr(self._yaml())
+
+    def __len__(self) -> int:
+        return len(_get_list_repr(self._yaml()))
+
+    def insert(self, index: int, item: Any) -> None:
         # TODO: test if starts with '#' to be interpreted as a comment
         #  or if it is a Comment
         #  need to analyze if it is the first element to insert the
         #  comment after the last comment of the key
-        self._yaml().insert(index, value)
+        #  check if key right before is a comment or value to see where it is
+        #  going to be added
+        if index == 0:
+            self._yaml().append(item.value)
+        elif isinstance(item, str):
+            comment = re.search(r"^\s*#", item)
+            if comment is not None:
+                self._add_comment(index, item)
+        else:
+            from souschef.comment import Comment
+
+            pos = 0
+            partial_list = self[:index]
+            for val in partial_list:
+                if isinstance(val, Comment):
+                    continue
+                pos += 1
+            self._yaml().insert(pos, item)
+
+    def append(self, value):
+        self.insert(0, value)
