@@ -1,5 +1,4 @@
-# souschef
+# Souschef
 
-# todo:
-- create list with the comments
-- create comments object
+Library to easily manipulate conda recipes.
+
