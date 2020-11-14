@@ -85,7 +85,7 @@ class ConstrainMixin:
         self._yaml()[self._id] = f"{pkg} {values.strip()}".strip()
 
 
-def _get_elements_and_comments(yaml) -> List:
+def _get_elements_and_comments(yaml, config) -> List:
     if not yaml:
         return []
     result = []
@@ -94,7 +94,10 @@ def _get_elements_and_comments(yaml) -> List:
     else:
         zip_val = yaml.items()
     for key, value in zip_val:
-        result.append(convert_to_abstract_repr(value, key, yaml))
+        result.append(convert_to_abstract_repr(value, key, yaml, config))
+        if config.show_comments is False:
+            continue
+
         comment_token = yaml.ca.items.get(key, None)
         if comment_token is None:
             continue
@@ -105,6 +108,9 @@ def _get_elements_and_comments(yaml) -> List:
                 comment_token[3] if comment_token[2] is None else comment_token[2]
             )
             start_inline = comment_token[2] is not None
+            if list_comment is None and comment_token[0]:
+                list_comment = comment_token[0]
+                start_inline = True
             if not isinstance(list_comment, list):
                 list_comment = [list_comment]
             for comment in list_comment:
@@ -132,20 +138,27 @@ def _get_last_section_comment(yaml, key) -> List:
         return []
 
 
-def _get_list_repr(yaml) -> List:
-    result = _get_root_comments(yaml)
-    result.extend(_get_elements_and_comments(yaml))
+def _get_list_repr(yaml, config) -> List:
+    result = _get_root_comments(yaml) if config.show_comments else []
+    result.extend(_get_elements_and_comments(yaml, config))
     return result
 
 
 def _get_root_comments(yaml) -> List:
+    result = []
     try:
         all_comments = yaml.ca.comment[1]
     except (KeyError, AttributeError, TypeError):
-        all_comments = []
+        all_comments = None
     if all_comments is None:
         all_comments = []
-    result = []
+        try:
+            if yaml.ca.comment[0]:
+                comment = yaml.ca.comment[0]
+                result.extend(comment_factory(comment, start_inline_comment=True))
+        except (KeyError, AttributeError, TypeError):
+            pass
+
     for comment in all_comments:
         result.extend(comment_factory(comment))
     return result
@@ -156,14 +169,14 @@ class GetSetItemMixin:
         yaml = self._get_yaml()
 
         if isinstance(item, int):
-            return _get_list_repr(yaml)[item]
+            return _get_list_repr(yaml, self._config())[item]
 
         recipe_item = (
             yaml.get(item, None) if isinstance(yaml, CommentedMap) else yaml[item]
         )
         if recipe_item is None:
             return None
-        return convert_to_abstract_repr(recipe_item, item, yaml)
+        return convert_to_abstract_repr(recipe_item, item, yaml, self._config())
 
     def _get_yaml(self):
         try:
@@ -173,7 +186,22 @@ class GetSetItemMixin:
 
     def __setitem__(self, key, value):
         yaml = self._get_yaml()
-        yaml[key] = value
+        if not isinstance(key, int) or self._config().show_comments:
+            yaml[key] = value
+            return
+
+        num_comments = 0
+        key_pivot = key
+        from souschef.comment import Comment
+
+        for item in self:
+            if key_pivot == 0:
+                break
+            if isinstance(item, Comment):
+                num_comments += 1
+            else:
+                key_pivot -= 1
+        yaml[key - num_comments] = value
 
     def __delitem__(self, key):
         from souschef.comment import Comment
@@ -195,7 +223,7 @@ class GetSetAttrMixin:
             if "_" in item:
                 return self.__getattr__(item.replace("_", "-"))
             raise AttributeError(f"Attribute {item} does not exist.")
-        return convert_to_abstract_repr(recipe_item, item, yaml)
+        return convert_to_abstract_repr(recipe_item, item, yaml, self._config())
 
 
 def _get_comment_from_obj(obj_repr):

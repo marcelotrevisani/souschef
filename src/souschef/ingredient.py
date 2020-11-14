@@ -37,32 +37,35 @@ class IngredientList(
     mixins.GetSetItemMixin,
     MutableSequence,
 ):
-    def __init__(self, parent_yaml, key: Union[int, str]):
+    def __init__(self, parent_yaml, key: Union[int, str], config):
         self._key = key
         self._yaml = weakref.ref(parent_yaml)
+        self._config = weakref.ref(config)
 
     def __repr__(self) -> str:
         return f"{self._key}: {str(self)}"
 
     def __str__(self) -> str:
-        return str(_get_list_repr(self._yaml()))
+        return str(_get_list_repr(self._yaml(), self._config()))
 
     def __eq__(self, other) -> bool:
         if len(other) != len(self):
             return False
-        for ingredient, element in zip(_get_list_repr(self._yaml()), other):
+        for ingredient, element in zip(
+            _get_list_repr(self._yaml(), self._config()), other
+        ):
             if ingredient != element:
                 return False
         return True
 
     def __iter__(self) -> Iterable:
-        return iter(_get_list_repr(self._yaml()))
+        return iter(_get_list_repr(self._yaml(), self._config()))
 
     def __contains__(self, item) -> bool:
-        return item in _get_list_repr(self._yaml())
+        return item in _get_list_repr(self._yaml(), self._config())
 
     def __len__(self) -> int:
-        return len(_get_list_repr(self._yaml()))
+        return len(_get_list_repr(self._yaml(), self._config()))
 
     def insert(self, index: int, item: Any) -> None:
         # TODO: test if starts with '#' to be interpreted as a comment
