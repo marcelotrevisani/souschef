@@ -1,5 +1,5 @@
 import re
-from typing import List, Union
+from typing import List
 
 from ruamel.yaml import CommentToken
 
@@ -63,7 +63,7 @@ class Comment:
 
 
 def comment_factory(
-    comment_token: Union[CommentToken, Comment], start_inline_comment: bool = False
+    comment_token: CommentToken, start_inline_comment: bool = False
 ) -> List[Comment]:
     if comment_token is None:
         return []
