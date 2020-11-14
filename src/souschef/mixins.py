@@ -139,13 +139,20 @@ def _get_list_repr(yaml) -> List:
 
 
 def _get_root_comments(yaml) -> List:
+    result = []
     try:
         all_comments = yaml.ca.comment[1]
     except (KeyError, AttributeError, TypeError):
-        all_comments = []
+        all_comments = None
     if all_comments is None:
         all_comments = []
-    result = []
+        try:
+            if yaml.ca.comment[0]:
+                comment = yaml.ca.comment[0]
+                result.extend(comment_factory(comment, start_inline_comment=True))
+        except (KeyError, AttributeError, TypeError):
+            pass
+
     for comment in all_comments:
         result.extend(comment_factory(comment))
     return result

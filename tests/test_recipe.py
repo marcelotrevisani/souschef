@@ -119,6 +119,11 @@ def comment_yaml(path_data):
     return Recipe(load_file=path_data / "comment.yaml")
 
 
+def test_comments_right_after_section(comment_yaml):
+    assert comment_yaml["requirements"][0].value == "comment after requirements"
+    assert comment_yaml["requirements"]["host"][0].value == "before val1"
+
+
 def test_comment(comment_yaml):
     assert comment_yaml[0].raw_value == "# init"
     assert comment_yaml[0].raw_value == "# init"
