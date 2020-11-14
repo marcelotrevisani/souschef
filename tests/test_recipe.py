@@ -5,7 +5,7 @@ from souschef.recipe import Recipe
 
 
 def test_load_pure_yaml_recipe(path_data):
-    recipe = Recipe(load_file=path_data / "pure.yaml")
+    recipe = Recipe(load_file=path_data / "pure.yaml", show_comments=False)
     assert recipe["test"].selector == "inline test selector"
     recipe["test"]["requires"].selector = "TESTING SELECTOR"
     assert recipe["test"]["requires"].selector == "TESTING SELECTOR"
@@ -124,6 +124,10 @@ def test_comments_right_after_section(comment_yaml):
     assert comment_yaml["requirements"]["host"][0].value == "before val1"
 
 
+def test_comments_right_after_ingredient(comment_yaml):
+    assert comment_yaml["requirements"]["host"][2].value == "after val1"
+
+
 def test_comment(comment_yaml):
     assert comment_yaml[0].raw_value == "# init"
     assert comment_yaml[0].raw_value == "# init"
@@ -141,12 +145,23 @@ def test_delete_comment(comment_yaml):
 
 
 def test_list_repr_str(comment_yaml):
+    comment_yaml.show_comments = True
     assert (
         repr(comment_yaml[-5])
-        == "key_without: ['# after key_without - before list', 'ab', 'cd']"
+        == "key_without: ['# after key_without - before list', 'ab', 'cd',"
+        " '# entire section key_without', '']"
     )
-    assert str(comment_yaml[-5]) == "['# after key_without - before list', 'ab', 'cd']"
+    assert (
+        str(comment_yaml[-5]) == "['# after key_without - before list', 'ab', 'cd',"
+        " '# entire section key_without', '']"
+    )
     assert comment_yaml[-5][0] == "# after key_without - before list"
     assert comment_yaml[-5][1] == "ab"
     assert comment_yaml[-5][2] == "cd"
-    assert comment_yaml[-5] == ["# after key_without - before list", "ab", "cd"]
+    assert comment_yaml[-5] == [
+        "# after key_without - before list",
+        "ab",
+        "cd",
+        "# entire section key_without",
+        "",
+    ]

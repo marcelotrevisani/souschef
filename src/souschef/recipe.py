@@ -4,6 +4,7 @@ from typing import Optional, Union
 from ruamel.yaml import YAML
 
 from souschef import mixins
+from souschef.config import RecipeConfiguration
 
 yaml = YAML(typ="jinja2")
 yaml.indent(mapping=2, sequence=4, offset=2)
@@ -16,12 +17,25 @@ class Recipe(mixins.GetSetAttrMixin, mixins.GetSetItemMixin, mixins.InlineCommen
         name: Optional[str] = None,
         version: Optional[str] = None,
         load_file: Union[str, Path, None] = None,
+        show_comments: bool = True,
     ):
         self._name = name
         if load_file:
             self._yaml = self.__load_recipe(Path(load_file))
         else:
             self._yaml = self.__create_yaml(name, version)
+        self.__config = RecipeConfiguration(show_comments=show_comments)
+
+    def _config(self):
+        return self.__config
+
+    @property
+    def show_comments(self) -> bool:
+        return self._config.show_comments
+
+    @show_comments.setter
+    def show_comments(self, val: bool):
+        self.__config.show_comments = val
 
     def __repr__(self) -> str:
         return f"{str([s for s in self])}"

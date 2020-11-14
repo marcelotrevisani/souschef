@@ -12,9 +12,12 @@ class Section(
     mixins.GetSetItemMixin,
     mixins.InlineCommentMixin,
 ):
-    def __init__(self, name: Union[int, str], item: CommentedMap, parent: CommentedMap):
+    def __init__(
+        self, name: Union[int, str], item: CommentedMap, parent: CommentedMap, config,
+    ):
         self._parent = weakref.ref(parent)
         self._yaml = weakref.ref(item)
+        self._config = weakref.ref(config)
         self._name = name
 
     def __repr__(self) -> str:
