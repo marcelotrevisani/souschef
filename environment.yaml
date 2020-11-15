@@ -11,3 +11,5 @@ dependencies:
   - ruamel.yaml>=0.15.3
   - ruamel.yaml.jinja2
   - pip
+  - setuptools
+  - setuptools_scm

@@ -11,10 +11,11 @@ else:
 
 setup(
     name="souschef",
-    packages=find_packages(where="src/souschef"),
+    packages=find_packages(where="src"),
     use_scm_version={"write_to": "src/souschef/_version.py"},
     setup_requires=["setuptools-scm", "setuptools>=30.3.0"],
     package_data={"": ["LICENSE", "AUTHORS"]},
+    package_dir={"": "src"},
     include_package_data=True,
     python_requires=">=3.7",
     install_requires=["ruamel.yaml >=0.15.3", "ruamel.yaml.jinja2"],
