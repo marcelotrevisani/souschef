@@ -11,7 +11,7 @@ else:
 
 setup(
     name="souschef",
-    packages=find_packages(where="src"),
+    packages=find_packages(where="src/souschef"),
     use_scm_version={"write_to": "src/souschef/_version.py"},
     setup_requires=["setuptools-scm", "setuptools>=30.3.0"],
     package_data={"": ["LICENSE", "AUTHORS"]},
