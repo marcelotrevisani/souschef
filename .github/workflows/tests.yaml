@@ -24,3 +24,14 @@ jobs:
       with:
         auto-update-conda: true
         python-version: ${{ matrix.py_ver }}
+        environment-file: environment.yaml
+        activate-environment: gs
+    - name: Conda info
+      shell: bash -l {0}
+      run: |
+        conda info --all
+        conda list
+    - name: Running serial tests
+      shell: bash -l {0}
+      run: |
+        pytest
