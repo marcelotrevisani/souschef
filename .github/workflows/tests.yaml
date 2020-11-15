@@ -43,5 +43,12 @@ jobs:
                 --cov-report html:coverage-html \
                 --cov-report xml:coverage.xml \
                 --cov-config=.coveragerc \
-                --junit-xml=Linux-py${{ matrix.py_ver }}-serial.xml \
-                --junit-prefix=Linux-py${{ matrix.py_ver }}-serial
+                --junit-xml=py${{ matrix.py_ver }}.xml \
+                --junit-prefix=py${{ matrix.py_ver }}
+    - name: Upload coverage to Codecov
+      uses: codecov/codecov-action@v1
+      with:
+        files: ./coverage-serial.xml
+        directory: .
+        flags: unittests
+        fail_ci_if_error: true
