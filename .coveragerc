@@ -1,5 +1,5 @@
 [run]
-source=src/masterchef
+source=src/souschef
 omit =
     .cache/*
     */tests/*
@@ -7,8 +7,8 @@ omit =
     .pytest_cache/*
     setup.py
     _version.py
-    masterchef.egg-info/*
+    souschef.egg-info/*
     .github/*
 
 [paths]
-source = src/masterchef
+source = src/souschef

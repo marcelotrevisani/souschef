@@ -25,7 +25,7 @@ jobs:
         auto-update-conda: true
         python-version: ${{ matrix.py_ver }}
         environment-file: environment.yaml
-        activate-environment: gs
+        activate-environment: sc
     - name: Conda info
       shell: bash -l {0}
       run: |
@@ -34,4 +34,14 @@ jobs:
     - name: Running serial tests
       shell: bash -l {0}
       run: |
-        pytest
+        pytest  tests \
+                -vv \
+                -n auto \
+                --color=yes \
+                --cov=./ \
+                --cov-append \
+                --cov-report html:coverage-html \
+                --cov-report xml:coverage.xml \
+                --cov-config=.coveragerc \
+                --junit-xml=Linux-py${{ matrix.py_ver }}-serial.xml \
+                --junit-prefix=Linux-py${{ matrix.py_ver }}-serial
