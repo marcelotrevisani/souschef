@@ -1,5 +1,5 @@
 import re
-from typing import Any, List, Union
+from typing import List, Union
 
 from ruamel.yaml.comments import CommentedMap, CommentedSeq
 
@@ -210,20 +210,6 @@ class GetSetItemMixin:
             self[key].remove()
         else:
             del self._get_yaml()[key]
-
-
-class GetSetAttrMixin:
-    def __getattr__(self, item: str) -> Any:
-        try:
-            yaml = self._yaml()
-        except (TypeError, KeyError):
-            yaml = self._yaml
-        recipe_item = yaml.get(item, None)
-        if recipe_item is None:
-            if "_" in item:
-                return self.__getattr__(item.replace("_", "-"))
-            raise AttributeError(f"Attribute {item} does not exist.")
-        return convert_to_abstract_repr(recipe_item, item, yaml, self._config())
 
 
 def _get_comment_from_obj(obj_repr):

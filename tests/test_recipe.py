@@ -59,12 +59,16 @@ def test_create_selector(path_data, tmpdir):
 
 def test_get_set_constrain(path_data, tmpdir):
     recipe = Recipe(load_file=path_data / "constrains.yaml")
-    assert recipe.requirements.host == ["python >=3.6,<3.9", "pip >20.0.0", "pytest"]
-    recipe.requirements.host[0] = "python"
-    recipe.requirements.host[1] = "pip"
-    recipe.requirements.host[2] = "pytest <=5.0.1"
+    assert recipe["requirements"]["host"] == [
+        "python >=3.6,<3.9",
+        "pip >20.0.0",
+        "pytest",
+    ]
+    recipe["requirements"]["host"][0] = "python"
+    recipe["requirements"]["host"][1] = "pip"
+    recipe["requirements"]["host"][2] = "pytest <=5.0.1"
 
-    assert recipe.requirements.host == ["python", "pip", "pytest <=5.0.1"]
+    assert recipe["requirements"]["host"] == ["python", "pip", "pytest <=5.0.1"]
 
     constrain_folder = tmpdir.mkdir("constrain-output")
     with open(constrain_folder / "output_constrain.yaml", "w") as f:
@@ -85,12 +89,12 @@ def test_get_set_constrain(path_data, tmpdir):
 
 def test_inline_comment(path_data, tmpdir):
     recipe = Recipe(load_file=path_data / "without_selector.yaml")
-    assert recipe.foo_section.inline_comment == ""
+    assert recipe["foo_section"].inline_comment == ""
     assert recipe["foo_section"].inline_comment == ""
 
     recipe["foo_section"].inline_comment = "FOO INLINE COMMENT"
     assert recipe["foo_section"].inline_comment == "# FOO INLINE COMMENT"
-    recipe.foo_section.inline_comment = "FOO COMMENT 2"
+    recipe["foo_section"].inline_comment = "FOO COMMENT 2"
     assert recipe["foo_section"].inline_comment == "# FOO COMMENT 2"
 
     assert recipe["foo_section"]["bar_section"][0].inline_comment == ""
