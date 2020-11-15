@@ -1,0 +1,15 @@
+name: sc
+channels:
+  - conda-forge
+  - defaults
+dependencies:
+  - pytest
+  - pytest-cov
+  - pytest-xdist
+  - pytest-forked
+  - mock
+  - ruamel.yaml>=0.15.3
+  - ruamel.yaml.jinja2
+  - pip
+  - setuptools
+  - setuptools_scm
