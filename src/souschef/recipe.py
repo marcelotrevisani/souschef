@@ -11,7 +11,7 @@ yaml.indent(mapping=2, sequence=4, offset=2)
 yaml.width = 600
 
 
-class Recipe(mixins.GetSetAttrMixin, mixins.GetSetItemMixin, mixins.InlineCommentMixin):
+class Recipe(mixins.GetSetItemMixin, mixins.InlineCommentMixin):
     def __init__(
         self,
         name: Optional[str] = None,

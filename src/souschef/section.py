@@ -7,10 +7,7 @@ from souschef import mixins
 
 
 class Section(
-    mixins.GetSetAttrMixin,
-    mixins.SelectorMixin,
-    mixins.GetSetItemMixin,
-    mixins.InlineCommentMixin,
+    mixins.SelectorMixin, mixins.GetSetItemMixin, mixins.InlineCommentMixin,
 ):
     def __init__(
         self, name: Union[int, str], item: CommentedMap, parent: CommentedMap, config,
