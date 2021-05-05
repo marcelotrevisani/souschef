@@ -4,24 +4,30 @@ from ruamel.yaml import round_trip_dump
 from souschef.recipe import Recipe
 
 
-def test_load_pure_yaml_recipe(path_data):
-    recipe = Recipe(load_file=path_data / "pure.yaml", show_comments=False)
-    assert recipe["test"].selector == "inline test selector"
-    recipe["test"]["requires"].selector = "TESTING SELECTOR"
-    assert recipe["test"]["requires"].selector == "TESTING SELECTOR"
-    assert recipe["version"] == 3
-    recipe["version"].value = 4
-    assert recipe["version"] == 4
-    recipe["version"] = 5
-    assert recipe["version"] == 5
-    assert recipe["version"] == 5
-    assert recipe["package"]["name"] == "foo"
-    assert recipe["package"]["version"] == "1.0.0"
-    assert recipe["test"]["requires"] == ["pip", "pytest"]
-    assert len(recipe["test"]["requires"]) == 2
-    assert "pip" in recipe["test"]["requires"]
-    assert recipe["test"]["commands"] == ["pytest foo"]
-    assert recipe["key-extra"] == ["bar"]
+@pytest.fixture(scope="function")
+def pure_yaml(path_data):
+    return Recipe(load_file=path_data / "pure.yaml", show_comments=False)
+
+
+def test_set_pure_yaml_file(pure_yaml):
+    pure_yaml["test"]["requires"].selector = "TESTING SELECTOR"
+    assert pure_yaml["test"]["requires"].selector == "TESTING SELECTOR"
+    pure_yaml["version"].value = 4
+    assert pure_yaml["version"] == 4
+    pure_yaml["version"] = 5
+    assert pure_yaml["version"] == 5
+
+
+def test_load_pure_yaml_recipe(pure_yaml):
+    assert pure_yaml["test"].selector == "inline test selector"
+    assert pure_yaml["version"] == 3
+    assert pure_yaml["package"]["name"] == "foo"
+    assert pure_yaml["package"]["version"] == "1.0.0"
+    assert pure_yaml["test"]["requires"] == ["pip", "pytest"]
+    assert len(pure_yaml["test"]["requires"]) == 2
+    assert "pip" in pure_yaml["test"]["requires"]
+    assert pure_yaml["test"]["commands"] == ["pytest foo"]
+    assert pure_yaml["key-extra"] == ["bar"]
 
 
 def test_create_selector(path_data, tmpdir):
