@@ -91,11 +91,11 @@ def test_list_repr_str(comment_yaml):
     comment_yaml.show_comments = True
     assert (
         repr(comment_yaml[-5])
-        == "key_without: ['# after key_without - before list', 'ab', 'cd',"
+        == "key_without: ['# after key_without - before list', ab, cd,"
         " '# entire section key_without', '']"
     )
     assert (
-        str(comment_yaml[-5]) == "['# after key_without - before list', 'ab', 'cd',"
+        str(comment_yaml[-5]) == "['# after key_without - before list', ab, cd,"
         " '# entire section key_without', '']"
     )
     assert comment_yaml[-5][0] == "# after key_without - before list"
@@ -139,3 +139,11 @@ def test_recipe_keys(comment_yaml):
 
 def test_recipe_values(simple_yaml):
     assert list(simple_yaml.values()) == [3, "foo", "bar", 1]
+
+
+def test_section_repr(comment_yaml):
+    assert repr(comment_yaml["version"]) == "version: 3"
+
+
+def test_section_str(comment_yaml):
+    assert str(comment_yaml["version"]) == "version: 3"
