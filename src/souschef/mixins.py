@@ -1,9 +1,9 @@
 import re
-from typing import List, Union
+from typing import List, Optional, Union
 
 from ruamel.yaml.comments import CommentedMap, CommentedSeq
 
-from souschef.comment import comment_factory
+from souschef.comment import Comment, comment_factory
 from souschef.tools import convert_to_abstract_repr
 
 
@@ -16,20 +16,15 @@ class InlineCommentMixin:
         return self._yaml().ca.comment
 
     @property
-    def inline_comment(self) -> str:
+    def inline_comment(self) -> Optional[Comment]:
         try:
             all_comments = self._get_yaml_comment()
             if not all_comments:
-                return ""
+                return None
         except (TypeError, AttributeError, IndexError, KeyError):
-            return ""
+            return None
 
-        all_comments = all_comments[0]
-        if not all_comments.value.strip():
-            return ""
-
-        all_comments = all_comments.value.split("\n")
-        return all_comments[0] if all_comments else ""
+        return Comment(all_comments[0], 0) if all_comments[0] else None
 
     @inline_comment.setter
     def inline_comment(self, comment: str):
@@ -56,11 +51,11 @@ class InlineCommentMixin:
 
 class SelectorMixin(InlineCommentMixin):
     @property
-    def selector(self) -> str:
+    def selector(self) -> Optional[str]:
         re_selector = re.compile(r"\s*#\s+\[(.*)\]")
-        result = re_selector.search(self.inline_comment)
+        result = re_selector.search(getattr(self.inline_comment, "raw_value", ""))
 
-        return result.group(1) if result else ""
+        return result.group(1) if result else None
 
     @selector.setter
     def selector(self, selector_value: str):
@@ -89,10 +84,7 @@ def _get_elements_and_comments(yaml, config) -> List:
     if not yaml:
         return []
     result = []
-    if isinstance(yaml, CommentedSeq):
-        zip_val = enumerate(yaml)
-    else:
-        zip_val = yaml.items()
+    zip_val = enumerate(yaml) if isinstance(yaml, CommentedSeq) else yaml.items()
     for key, value in zip_val:
         result.append(convert_to_abstract_repr(value, key, yaml, config))
         if config.show_comments is False:

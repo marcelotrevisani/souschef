@@ -48,7 +48,7 @@ class IngredientList(
     def __str__(self) -> str:
         return str(_get_list_repr(self._yaml(), self._config()))
 
-    def __eq__(self, other) -> bool:
+    def __eq__(self, other) -> bool:  # sourcery skip: invert-any-all, use-any
         if len(other) != len(self):
             return False
         for ingredient, element in zip(
@@ -79,7 +79,7 @@ class IngredientList(
         elif isinstance(item, str):
             comment = re.search(r"^\s*#", item)
             if comment is not None:
-                self._add_comment(index, item)
+                self._yaml().insert(index, item)
         else:
             from souschef.comment import Comment
 

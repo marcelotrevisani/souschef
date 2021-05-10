@@ -55,6 +55,9 @@ class Comment:
     def __str__(self) -> str:
         return str(self.value)
 
+    def __len__(self) -> int:
+        return len(str(self))
+
     def __eq__(self, other: str) -> bool:
         separated_comment = re.search(r"^\s*#\s*(.*)", other)
         if separated_comment is None:
