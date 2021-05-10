@@ -42,11 +42,10 @@ class Recipe(mixins.GetSetItemMixin, mixins.InlineCommentMixin):
     def __contains__(self, item: str) -> bool:
         return item in list(self.keys())
 
-    def keys(self) -> Generator[None, str]:
-        for k in self._yaml.keys():
-            yield k
+    def keys(self) -> Generator:
+        yield from self._yaml.keys()
 
-    def values(self) -> Generator[None, str]:
+    def values(self) -> Generator:
         for section in self.keys():
             yield self[section]
 
