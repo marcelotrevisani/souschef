@@ -210,3 +210,12 @@ def test_create_recipe():
     recipe = Recipe(name="my-package", version="1.2.3")
     assert recipe["package"]["version"] == "1.2.3"
     assert recipe["package"]["name"] == "<{ name|lower }}"
+
+
+def test_check_presence_key(pure_yaml):
+    assert "package" in pure_yaml
+    assert "abcdef" not in pure_yaml
+
+
+def test_add_new_section(pure_yaml):
+    assert "package" in pure_yaml

@@ -5,6 +5,7 @@ from ruamel.yaml import YAML
 
 from souschef import mixins
 from souschef.config import RecipeConfiguration
+from souschef.section import Section
 
 yaml = YAML(typ="jinja2")
 yaml.indent(mapping=2, sequence=4, offset=2)
@@ -39,6 +40,15 @@ class Recipe(mixins.GetSetItemMixin, mixins.InlineCommentMixin):
 
     def __repr__(self) -> str:
         return f"{str([s for s in self])}"
+
+    def __contains__(self, item: str) -> bool:
+        return any(str(key) == item for key in self if isinstance(key, Section))
+
+    def keys(self):
+        pass
+
+    def iter_as_dict(self):
+        pass
 
     def __create_yaml(self, name: str, version: Optional[str] = None):
         content = f'{{% set name = "{name}" %}}\n'
