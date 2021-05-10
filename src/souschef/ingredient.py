@@ -12,10 +12,9 @@ class Ingredient(mixins.SelectorMixin, mixins.InlineCommentMixin):
         self._id = position
 
     def __repr__(self) -> str:
-        return repr(self.value)
-
-    def __str__(self) -> str:
-        return str(self.value)
+        if isinstance(self._id, int):
+            return str(self.value)
+        return f"{self._id}: {self.value}"
 
     @property
     def value(self) -> Any:

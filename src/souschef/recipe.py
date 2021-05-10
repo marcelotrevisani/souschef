@@ -37,7 +37,7 @@ class Recipe(mixins.GetSetItemMixin, mixins.InlineCommentMixin):
         self.__config.show_comments = val
 
     def __repr__(self) -> str:
-        return f"{str([s for s in self])}"
+        return f"{str([str(s) for s in self])}"
 
     def __contains__(self, item: str) -> bool:
         return item in list(self.keys())
