@@ -9,6 +9,11 @@ def pure_yaml(path_data):
     return Recipe(load_file=path_data / "pure.yaml", show_comments=False)
 
 
+@pytest.fixture(scope="function")
+def simple_yaml(path_data):
+    return Recipe(load_file=path_data / "simple.yaml")
+
+
 def test_set_pure_yaml_file(pure_yaml):
     pure_yaml["test"]["requires"].selector = "TESTING SELECTOR"
     assert pure_yaml["test"]["requires"].selector == "TESTING SELECTOR"
@@ -218,4 +223,20 @@ def test_check_presence_key(pure_yaml):
 
 
 def test_add_new_section(pure_yaml):
-    assert "package" in pure_yaml
+    assert "abc" not in pure_yaml
+    pure_yaml["abc"] = "new section"
+    assert pure_yaml["abc"] == "new section"
+    assert "abc" in pure_yaml
+
+
+def test_recipe_keys(comment_yaml):
+    assert list(comment_yaml.keys()) == [
+        "version",
+        "requirements",
+        "key_without",
+        "other_final",
+    ]
+
+
+def test_recipe_values(simple_yaml):
+    assert list(simple_yaml.values()) == [3, "foo", "bar", 1]

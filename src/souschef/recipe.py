@@ -1,11 +1,10 @@
 from pathlib import Path
-from typing import Optional, Union
+from typing import Generator, Optional, Union
 
 from ruamel.yaml import YAML
 
 from souschef import mixins
 from souschef.config import RecipeConfiguration
-from souschef.section import Section
 
 yaml = YAML(typ="jinja2")
 yaml.indent(mapping=2, sequence=4, offset=2)
@@ -20,7 +19,6 @@ class Recipe(mixins.GetSetItemMixin, mixins.InlineCommentMixin):
         load_file: Union[str, Path, None] = None,
         show_comments: bool = True,
     ):
-        self._name = name
         if load_file:
             self._yaml = self.__load_recipe(Path(load_file))
         else:
@@ -42,13 +40,15 @@ class Recipe(mixins.GetSetItemMixin, mixins.InlineCommentMixin):
         return f"{str([s for s in self])}"
 
     def __contains__(self, item: str) -> bool:
-        return any(str(key) == item for key in self if isinstance(key, Section))
+        return item in list(self.keys())
 
-    def keys(self):
-        pass
+    def keys(self) -> Generator[None, str]:
+        for k in self._yaml.keys():
+            yield k
 
-    def iter_as_dict(self):
-        pass
+    def values(self) -> Generator[None, str]:
+        for section in self.keys():
+            yield self[section]
 
     def __create_yaml(self, name: str, version: Optional[str] = None):
         content = f'{{% set name = "{name}" %}}\n'
