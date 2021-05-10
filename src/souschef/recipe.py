@@ -41,16 +41,13 @@ class Recipe(mixins.GetSetItemMixin, mixins.InlineCommentMixin):
         return f"{str([s for s in self])}"
 
     def __create_yaml(self, name: str, version: Optional[str] = None):
-        return yaml.load(
-            f'{{% set name = "{name}" %}}\n{{% set version = "{version}" %}}\n'
-            if version
-            else ""
-            "package:\n"
-            "    name: {{ name|lower }}\n"
-            f'   version: "{version}"\n'
-            if version
-            else ""
-        )
+        content = f'{{% set name = "{name}" %}}\n'
+        if version:
+            content += f'{{% set version = "{version}" %}}\n'
+        content += "package:\n    name: {{ name|lower }}\n"
+        if version:
+            content += f'    version: "{version}"\n'
+        return yaml.load(content)
 
     def __load_recipe(self, path_recipe: Path):
         with open(path_recipe, "r") as yaml_file:

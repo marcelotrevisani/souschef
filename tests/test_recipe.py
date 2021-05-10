@@ -181,3 +181,9 @@ def test_list_repr_str(comment_yaml):
         "# entire section key_without",
         "",
     ]
+
+
+def test_create_recipe():
+    recipe = Recipe(name="my-package", version="1.2.3")
+    assert recipe["package"]["version"] == "1.2.3"
+    assert recipe["package"]["name"] == "<{ name|lower }}"
