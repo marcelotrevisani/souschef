@@ -1,0 +1,5 @@
+version: 3  # version inline comment
+requirements: "foo"  # req inline comment
+
+key_without: "bar"
+other_final: 1

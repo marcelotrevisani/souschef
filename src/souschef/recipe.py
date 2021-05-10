@@ -1,5 +1,5 @@
 from pathlib import Path
-from typing import Optional, Union
+from typing import Generator, Optional, Union
 
 from ruamel.yaml import YAML
 
@@ -19,7 +19,6 @@ class Recipe(mixins.GetSetItemMixin, mixins.InlineCommentMixin):
         load_file: Union[str, Path, None] = None,
         show_comments: bool = True,
     ):
-        self._name = name
         if load_file:
             self._yaml = self.__load_recipe(Path(load_file))
         else:
@@ -39,6 +38,16 @@ class Recipe(mixins.GetSetItemMixin, mixins.InlineCommentMixin):
 
     def __repr__(self) -> str:
         return f"{str([s for s in self])}"
+
+    def __contains__(self, item: str) -> bool:
+        return item in list(self.keys())
+
+    def keys(self) -> Generator:
+        yield from self._yaml.keys()
+
+    def values(self) -> Generator:
+        for section in self.keys():
+            yield self[section]
 
     def __create_yaml(self, name: str, version: Optional[str] = None):
         content = f'{{% set name = "{name}" %}}\n'

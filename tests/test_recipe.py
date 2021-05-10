@@ -9,6 +9,11 @@ def pure_yaml(path_data):
     return Recipe(load_file=path_data / "pure.yaml", show_comments=False)
 
 
+@pytest.fixture(scope="function")
+def simple_yaml(path_data):
+    return Recipe(load_file=path_data / "simple.yaml")
+
+
 def test_set_pure_yaml_file(pure_yaml):
     pure_yaml["test"]["requires"].selector = "TESTING SELECTOR"
     assert pure_yaml["test"]["requires"].selector == "TESTING SELECTOR"
@@ -143,6 +148,29 @@ def test_comments_right_after_ingredient(comment_yaml):
     assert comment_yaml["requirements"]["host"][2].value == "after val1"
 
 
+def test_change_comment(comment_yaml):
+    assert comment_yaml[0].value == "init"
+    comment_yaml[0].value = "new comment"
+    assert comment_yaml[0].value == "new comment"
+    assert comment_yaml[0].raw_value == "# new comment"
+
+
+def test_change_inline_comment(comment_yaml):
+    assert comment_yaml["requirements"].inline_comment == "req inline comment"
+    comment_yaml["requirements"].inline_comment.value = "new comment"
+    assert comment_yaml["requirements"].inline_comment == "new comment"
+    assert comment_yaml["requirements"].inline_comment.value == "new comment"
+    assert comment_yaml["requirements"].inline_comment.raw_value == "# new comment"
+
+
+def test_add_inline_comment(pure_yaml):
+    assert pure_yaml["source"].inline_comment is None
+    pure_yaml["source"].inline_comment = "inline comment"
+    assert pure_yaml["source"].inline_comment == "inline comment"
+    assert pure_yaml["source"].inline_comment.value == "inline comment"
+    assert pure_yaml["source"].inline_comment.raw_value == "# inline comment"
+
+
 def test_comment(comment_yaml):
     assert comment_yaml["requirements"].inline_comment.value == "req inline comment"
     assert comment_yaml[0].raw_value == "# init"
@@ -187,3 +215,28 @@ def test_create_recipe():
     recipe = Recipe(name="my-package", version="1.2.3")
     assert recipe["package"]["version"] == "1.2.3"
     assert recipe["package"]["name"] == "<{ name|lower }}"
+
+
+def test_check_presence_key(pure_yaml):
+    assert "package" in pure_yaml
+    assert "abcdef" not in pure_yaml
+
+
+def test_add_new_section(pure_yaml):
+    assert "abc" not in pure_yaml
+    pure_yaml["abc"] = "new section"
+    assert pure_yaml["abc"] == "new section"
+    assert "abc" in pure_yaml
+
+
+def test_recipe_keys(comment_yaml):
+    assert list(comment_yaml.keys()) == [
+        "version",
+        "requirements",
+        "key_without",
+        "other_final",
+    ]
+
+
+def test_recipe_values(simple_yaml):
+    assert list(simple_yaml.values()) == [3, "foo", "bar", 1]
