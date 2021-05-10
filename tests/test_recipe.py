@@ -143,6 +143,29 @@ def test_comments_right_after_ingredient(comment_yaml):
     assert comment_yaml["requirements"]["host"][2].value == "after val1"
 
 
+def test_change_comment(comment_yaml):
+    assert comment_yaml[0].value == "init"
+    comment_yaml[0].value = "new comment"
+    assert comment_yaml[0].value == "new comment"
+    assert comment_yaml[0].raw_value == "# new comment"
+
+
+def test_change_inline_comment(comment_yaml):
+    assert comment_yaml["requirements"].inline_comment == "req inline comment"
+    comment_yaml["requirements"].inline_comment.value = "new comment"
+    assert comment_yaml["requirements"].inline_comment == "new comment"
+    assert comment_yaml["requirements"].inline_comment.value == "new comment"
+    assert comment_yaml["requirements"].inline_comment.raw_value == "# new comment"
+
+
+def test_add_inline_comment(pure_yaml):
+    assert pure_yaml["source"].inline_comment is None
+    pure_yaml["source"].inline_comment = "inline comment"
+    assert pure_yaml["source"].inline_comment == "inline comment"
+    assert pure_yaml["source"].inline_comment.value == "inline comment"
+    assert pure_yaml["source"].inline_comment.raw_value == "# inline comment"
+
+
 def test_comment(comment_yaml):
     assert comment_yaml["requirements"].inline_comment.value == "req inline comment"
     assert comment_yaml[0].raw_value == "# init"
