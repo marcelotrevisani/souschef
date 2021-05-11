@@ -1,5 +1,5 @@
 import weakref
-from typing import Union
+from typing import Dict, Mapping, Union
 
 from ruamel.yaml.comments import CommentedMap
 
@@ -28,5 +28,13 @@ class Section(
         return [v for v in self]
 
     @value.setter
-    def value(self, items: Union[None, "Section", str]):
-        pass
+    def value(self, items: Union[None, "Section", str, Dict]):
+        if isinstance(items, dict):
+            for key, value in items.items():
+                self[key] = value
+        else:
+            self._parent()[self._name] = items
+
+    def update(self, section: Mapping):
+        for key, value in section:
+            self[key] = value

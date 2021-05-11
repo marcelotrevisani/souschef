@@ -1,5 +1,5 @@
 from pathlib import Path
-from typing import Generator, Optional, Union
+from typing import Generator, Iterator, Optional, Union
 
 from ruamel.yaml import YAML
 
@@ -39,7 +39,7 @@ class Recipe(mixins.GetSetItemMixin, mixins.InlineCommentMixin):
     def __repr__(self) -> str:
         return f"{str([s for s in self])}"
 
-    def iter_as_dict(self) -> Generator:
+    def items(self) -> Iterator:
         yield from zip(self.keys(), self.values())
 
     def __contains__(self, item: str) -> bool:

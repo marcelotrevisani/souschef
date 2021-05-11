@@ -2,9 +2,14 @@ from typing import Union
 
 from ruamel.yaml.comments import CommentedMap, CommentedSeq
 
+from souschef.config import RecipeConfiguration
+
 
 def convert_to_abstract_repr(
-    item: Union[None, CommentedSeq, CommentedMap], name: str, yaml, config
+    item: Union[None, CommentedSeq, CommentedMap],
+    name: str,
+    yaml,
+    config: RecipeConfiguration,
 ):
     from souschef.ingredient import Ingredient
     from souschef.section import Section

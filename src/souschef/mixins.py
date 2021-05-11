@@ -4,6 +4,7 @@ from typing import List, Optional, Union
 from ruamel.yaml.comments import CommentedMap, CommentedSeq
 
 from souschef.comment import Comment, comment_factory
+from souschef.config import RecipeConfiguration
 from souschef.tools import convert_to_abstract_repr
 
 
@@ -80,7 +81,7 @@ class ConstrainMixin:
         self._yaml()[self._id] = f"{pkg} {values.strip()}".strip()
 
 
-def _get_elements_and_comments(yaml, config) -> List:
+def _get_elements_and_comments(yaml, config: RecipeConfiguration) -> List:
     if not yaml:
         return []
     result = []
@@ -130,7 +131,7 @@ def _get_last_section_comment(yaml, key) -> List:
         return []
 
 
-def _get_list_repr(yaml, config) -> List:
+def _get_list_repr(yaml, config: RecipeConfiguration) -> List:
     result = _get_root_comments(yaml) if config.show_comments else []
     result.extend(_get_elements_and_comments(yaml, config))
     return result
