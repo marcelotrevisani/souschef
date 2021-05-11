@@ -1,4 +1,3 @@
-import pytest
 from ruamel.yaml import round_trip_dump
 
 from souschef.recipe import Recipe
@@ -122,13 +121,6 @@ def test_check_presence_key(pure_yaml):
     assert "abcdef" not in pure_yaml
 
 
-def test_add_new_section(pure_yaml):
-    assert "abc" not in pure_yaml
-    pure_yaml["abc"] = "new section"
-    assert pure_yaml["abc"] == "new section"
-    assert "abc" in pure_yaml
-
-
 def test_recipe_keys(comment_yaml):
     assert list(comment_yaml.keys()) == [
         "version",
@@ -149,23 +141,3 @@ def test_iter_as_dict_recipe(simple_yaml):
         ("key_without", "bar"),
         ("other_final", 1),
     ]
-
-
-def test_section_repr(comment_yaml):
-    assert repr(comment_yaml["version"]) == "version: 3"
-
-
-def test_section_str(comment_yaml):
-    assert str(comment_yaml["version"]) == "version: 3"
-
-
-def test_section_value_set_dict(comment_yaml):
-    comment_yaml["requirements"].value = {"new": 1, "foo": "abc"}
-    assert comment_yaml["requirements"]["new"] == 1
-    assert comment_yaml["requirements"]["foo"] == "abc"
-
-
-@pytest.mark.parametrize("value", ("abc", 2, ["a", "b"], True))
-def test_section_value_set_str(comment_yaml, value):
-    comment_yaml["requirements"].value = value
-    assert comment_yaml["requirements"] == value
