@@ -9,6 +9,7 @@ omit =
     _version.py
     souschef.egg-info/*
     .github/*
+    __init__.py
 
 [paths]
 source = src/souschef

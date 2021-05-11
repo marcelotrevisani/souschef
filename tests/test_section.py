@@ -8,11 +8,11 @@ def test_add_new_section(pure_yaml):
     assert "abc" in pure_yaml
 
 
-def test_section_repr(comment_yaml):
+def test_ingredient_repr(comment_yaml):
     assert repr(comment_yaml["version"]) == "version: 3"
 
 
-def test_section_str(comment_yaml):
+def test_ingredient_str(comment_yaml):
     assert str(comment_yaml["version"]) == "version: 3"
 
 
@@ -38,3 +38,16 @@ def test_section_update_existing_key(comment_yaml):
 def test_section_value_set_str(comment_yaml, value):
     comment_yaml["requirements"].value = value
     assert comment_yaml["requirements"] == value
+
+
+def test_section_repr(comment_yaml):
+    assert repr(comment_yaml["requirements"]) == "<Section requirements>"
+
+
+def test_section_str(comment_yaml):
+    assert str(comment_yaml["requirements"]) == "requirements"
+
+
+def test_section_get_value(pure_yaml):
+    assert pure_yaml["package"].value[0] == "foo"
+    assert pure_yaml["package"].value[1] == "1.0.0"
