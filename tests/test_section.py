@@ -22,6 +22,18 @@ def test_section_value_set_dict(comment_yaml):
     assert comment_yaml["requirements"]["foo"] == "abc"
 
 
+def test_section_update(comment_yaml):
+    comment_yaml["requirements"].update({"new": 1, "new2": "foobar"})
+    assert comment_yaml["requirements"]["new"] == 1
+    assert comment_yaml["requirements"]["new2"] == "foobar"
+
+
+def test_section_update_existing_key(comment_yaml):
+    comment_yaml["requirements"].update({"new": 1, "host": "foobar"})
+    assert comment_yaml["requirements"]["host"] == "foobar"
+    assert comment_yaml["requirements"]["new"] == 1
+
+
 @pytest.mark.parametrize("value", ("abc", 2, ["a", "b"], True))
 def test_section_value_set_str(comment_yaml, value):
     comment_yaml["requirements"].value = value
