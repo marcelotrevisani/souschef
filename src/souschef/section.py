@@ -7,10 +7,16 @@ from souschef import mixins
 
 
 class Section(
-    mixins.SelectorMixin, mixins.GetSetItemMixin, mixins.InlineCommentMixin,
+    mixins.SelectorMixin,
+    mixins.GetSetItemMixin,
+    mixins.InlineCommentMixin,
 ):
     def __init__(
-        self, name: Union[int, str], item: CommentedMap, parent: CommentedMap, config,
+        self,
+        name: Union[int, str],
+        item: CommentedMap,
+        parent: CommentedMap,
+        config,
     ):
         self._parent = weakref.ref(parent)
         self._yaml = weakref.ref(item)
