@@ -141,6 +141,15 @@ def test_recipe_values(simple_yaml):
     assert list(simple_yaml.values()) == [3, "foo", "bar", 1]
 
 
+def test_iter_as_dict_recipe(simple_yaml):
+    assert list(simple_yaml.iter_as_dict()) == [
+        ("version", 3),
+        ("requirements", "foo"),
+        ("key_without", "bar"),
+        ("other_final", 1),
+    ]
+
+
 def test_section_repr(comment_yaml):
     assert repr(comment_yaml["version"]) == "version: 3"
 
