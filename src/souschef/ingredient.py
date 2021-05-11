@@ -3,6 +3,7 @@ import weakref
 from typing import Any, Iterable, MutableSequence, Union
 
 from souschef import mixins
+from souschef.config import RecipeConfiguration
 from souschef.mixins import _get_list_repr
 
 
@@ -36,7 +37,7 @@ class IngredientList(
     mixins.GetSetItemMixin,
     MutableSequence,
 ):
-    def __init__(self, parent_yaml, key: Union[int, str], config):
+    def __init__(self, parent_yaml, key: Union[int, str], config: RecipeConfiguration):
         self._key = key
         self._yaml = weakref.ref(parent_yaml)
         self._config = weakref.ref(config)
