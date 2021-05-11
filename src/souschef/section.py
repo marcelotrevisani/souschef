@@ -42,5 +42,4 @@ class Section(
             self._parent()[self._name] = items
 
     def update(self, section: Mapping):
-        for key, value in section:
-            self[key] = value
+        self.value = section
