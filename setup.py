@@ -10,7 +10,7 @@ else:
 
 
 setup(
-    name="souschef",
+    name="conda-souschef",
     packages=find_packages(where="src"),
     use_scm_version={"write_to": "src/souschef/_version.py"},
     setup_requires=["setuptools-scm", "setuptools>=30.3.0"],
