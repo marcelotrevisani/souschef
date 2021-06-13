@@ -29,11 +29,16 @@ class InlineCommentMixin:
 
     @inline_comment.setter
     def inline_comment(self, comment: str):
+        from souschef.ingredient import Ingredient
+
         try:
-            all_comments = self._yaml().ca.comment[0]
+            if isinstance(self, Ingredient):
+                all_comments = self._yaml().ca.items[self._id][0]
+            else:
+                all_comments = self._yaml().ca.comment[0]
             if all_comments.value is None:
                 raise AttributeError
-        except (TypeError, AttributeError, IndexError):
+        except (TypeError, AttributeError, IndexError, KeyError):
             from souschef.ingredient import Ingredient
 
             if isinstance(self, Ingredient):
@@ -161,7 +166,7 @@ class GetSetItemMixin:
     def __getitem__(self, item):
         yaml = self._get_yaml()
 
-        if isinstance(item, int):
+        if isinstance(item, (int, slice)):
             return _get_list_repr(yaml, self._config())[item]
 
         recipe_item = (
@@ -203,6 +208,58 @@ class GetSetItemMixin:
             self[key].remove()
         else:
             del self._get_yaml()[key]
+
+    def insert(self, index, value):
+        from souschef.comment import Comment
+
+        is_comment = re.match(r"^\s*#", value) is not None
+        if index < 0:
+            index = len(self) + index
+
+        if self._config().show_comments is False:
+            self._get_yaml().insert(index, value)
+        else:
+            pos = max(0, index - 1)
+            if is_comment:
+                self.__add_comment_to_list(pos, value)
+            else:
+                self.__add_value_right_position(Comment, index, value)
+
+    def __add_value_right_position(self, Comment, index, value):
+        pos_yaml = sum(map(lambda x: not isinstance(x, Comment), self[: index + 1]))
+
+        list_comments = self.__get_all_comments_after_position(Comment, index)
+
+        for p in reversed(range(len(list_comments))):
+            del self[index + p]
+
+        self._get_yaml().insert(pos_yaml, value)
+        self.__re_add_comments(Comment, list_comments, pos_yaml)
+
+    def __get_all_comments_after_position(self, Comment, index):
+        list_comments = []
+        for val in self[index:]:
+            if isinstance(val, Comment):
+                list_comments.append(val.value)
+            else:
+                break
+        return list_comments
+
+    def __re_add_comments(self, Comment, list_comments, pos_yaml):
+        comments = f"{Comment.NEW_LINE}".join(list_comments) if list_comments else None
+        if list_comments:
+            self._get_yaml().yaml_set_comment_before_after_key(
+                pos_yaml,
+                after=comments,
+            )
+        if list_comments[-1].strip() == "":
+            self[-1].value += f"{Comment.NEW_LINE}{list_comments[-1]}"
+
+    def __add_comment_to_list(self, pos, value):
+        if isinstance(self[pos], Comment):
+            self[pos].value += f"{Comment.NEW_LINE}{value}"
+        else:
+            self[pos].inline_comment.value += f"{Comment.NEW_LINE}{value}"
 
 
 def _get_comment_from_obj(obj_repr):

@@ -37,10 +37,9 @@ class Comment:
         re_comment = re.compile(r"^(\s*#\s*)(.*)", re.DOTALL)
         if re_comment.search(new_value) is None:
             new_value = f"# {new_value}"
-        else:
-            new_value = re_comment.sub(r"\1" + new_value, self.value)
 
         all_values = self._yaml.value.split(self.NEW_LINE)
+        all_values = all_values[:-1] if not all_values[-1] else all_values
         all_values[self.__pos] = new_value
         self._yaml.value = f"{self.NEW_LINE.join(all_values)}\n"
 

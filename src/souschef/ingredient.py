@@ -1,4 +1,3 @@
-import re
 import weakref
 from typing import Any, Iterable, MutableSequence, Union
 
@@ -66,30 +65,6 @@ class IngredientList(
 
     def __len__(self) -> int:
         return len(_get_list_repr(self._yaml(), self._config()))
-
-    def insert(self, index: int, item: Any) -> None:
-        # TODO: test if starts with '#' to be interpreted as a comment
-        #  or if it is a Comment
-        #  need to analyze if it is the first element to insert the
-        #  comment after the last comment of the key
-        #  check if key right before is a comment or value to see where it is
-        #  going to be added
-        if index == 0:
-            self._yaml().append(item.value)
-        elif isinstance(item, str):
-            comment = re.search(r"^\s*#", item)
-            if comment is not None:
-                self._yaml().insert(index, item)
-        else:
-            from souschef.comment import Comment
-
-            pos = 0
-            partial_list = self[:index]
-            for val in partial_list:
-                if isinstance(val, Comment):
-                    continue
-                pos += 1
-            self._yaml().insert(pos, item)
 
     def append(self, value):
         self.insert(0, value)
