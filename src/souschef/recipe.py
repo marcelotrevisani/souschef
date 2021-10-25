@@ -11,7 +11,7 @@ yaml.indent(mapping=2, sequence=4, offset=2)
 yaml.width = 600
 
 
-class Recipe(mixins.GetSetItemMixin, mixins.InlineCommentMixin):
+class Recipe(mixins.GetSetItemMixin, mixins.InlineCommentMixin, mixins.AddSection):
     def __init__(
         self,
         name: Optional[str] = None,
@@ -23,6 +23,7 @@ class Recipe(mixins.GetSetItemMixin, mixins.InlineCommentMixin):
             self._yaml = self.__load_recipe(Path(load_file))
         else:
             self._yaml = self.__create_yaml(name, version)
+        self._path_recipe = load_file
         self.__config = RecipeConfiguration(show_comments=show_comments)
 
     def _config(self):
@@ -64,3 +65,10 @@ class Recipe(mixins.GetSetItemMixin, mixins.InlineCommentMixin):
     def __load_recipe(self, path_recipe: Path):
         with open(path_recipe, "r") as yaml_file:
             return yaml.load(yaml_file)
+
+    def save(self, path_file=None):
+        path_file = path_file or self._path_recipe
+        if path_file is None:
+            raise ValueError("Please inform a valid path to export the recipe.")
+        with open(path_file, "w") as recipe:
+            yaml.dump(self._yaml, recipe)

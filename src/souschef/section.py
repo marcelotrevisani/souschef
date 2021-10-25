@@ -10,6 +10,7 @@ class Section(
     mixins.SelectorMixin,
     mixins.GetSetItemMixin,
     mixins.InlineCommentMixin,
+    mixins.AddSection,
 ):
     def __init__(
         self,

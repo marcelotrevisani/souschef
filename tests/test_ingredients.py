@@ -6,9 +6,9 @@ def test_append_host(comment_yaml):
     assert "NEW_DEPENDENCY" in comment_yaml["requirements"]["host"]
 
 
-def test_append_complete_recipe(recipe_for_issue_18):
-    recipe_for_issue_18["requirements"]["host"].append("flit")
-    assert "flit" in recipe_for_issue_18["requirements"]["host"]
+def test_append_complete_recipe(simple_full_recipe):
+    simple_full_recipe["requirements"]["host"].append("flit")
+    assert "flit" in simple_full_recipe["requirements"]["host"]
 
 
 @pytest.mark.parametrize("show_comments", (True,))
