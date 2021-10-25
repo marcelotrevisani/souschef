@@ -173,7 +173,7 @@ class GetSetItemMixin:
             yaml.get(item, None) if isinstance(yaml, CommentedMap) else yaml[item]
         )
         if recipe_item is None:
-            return None
+            return KeyError(f"Index {item} does not exist. Try to create it first.")
         return convert_to_abstract_repr(recipe_item, item, yaml, self._config())
 
     def _get_yaml(self):
@@ -185,7 +185,7 @@ class GetSetItemMixin:
     def __setitem__(self, key, value):
         yaml = self._get_yaml()
         if not isinstance(key, int) or self._config().show_comments:
-            yaml[key] = value
+            yaml[key] = CommentedMap(value) if isinstance(value, dict) else value
             return
 
         num_comments = 0
@@ -281,3 +281,9 @@ def _get_comment_from_obj(obj_repr):
         comment = ca_obj.ca.comment
         comment[0].value = "\n"
     return comment
+
+
+class AddSection:
+    def add_section(self, section_dict: dict):
+        for key, value in section_dict.items():
+            self._yaml[key] = CommentedMap(value) if isinstance(value, dict) else value

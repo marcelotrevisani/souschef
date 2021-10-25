@@ -141,3 +141,35 @@ def test_iter_as_dict_recipe(simple_yaml):
         ("key_without", "bar"),
         ("other_final", 1),
     ]
+
+
+def test_add_section():
+    recipe = Recipe(name="my_recipe")
+    recipe.add_section(
+        {"requirements": {"run": ["numpy", "python"], "host": {"python", "pip"}}}
+    )
+    assert set(recipe["requirements"]["run"]) == {"numpy", "python"}
+    assert set(recipe["requirements"]["host"]) == {"python", "pip"}
+
+
+def test_save_recipe(tmp_path):
+    recipe_path = tmp_path / "my_recipe.yaml"
+    recipe = Recipe(name="my-recipe", version="1.2.3")
+    recipe.add_section({"requirements": {"run": ["numpy", "python"]}})
+    recipe.add_section({"ABC": "DEF"})
+    recipe.save(recipe_path)
+
+    assert recipe_path.is_file()
+
+    loaded_recipe = Recipe(load_file=recipe_path)
+    assert "numpy" in loaded_recipe["requirements"]["run"]
+    assert loaded_recipe["ABC"] == "DEF"
+
+
+def test_update_recipe(simple_full_recipe, tmp_path):
+    recipe_path = tmp_path / "updated_recipe.yaml"
+    simple_full_recipe["requirements"]["host"].append("flit")
+    simple_full_recipe.save(recipe_path)
+
+    loaded_recipe = Recipe(load_file=recipe_path)
+    assert "flit" in loaded_recipe["requirements"]["host"]
