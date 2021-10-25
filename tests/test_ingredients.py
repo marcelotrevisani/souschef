@@ -1,6 +1,16 @@
 import pytest
 
 
+def test_append_host(comment_yaml):
+    comment_yaml["requirements"]["host"].append("NEW_DEPENDENCY")
+    assert "NEW_DEPENDENCY" in comment_yaml["requirements"]["host"]
+
+
+def test_append_complete_recipe(recipe_for_issue_18):
+    recipe_for_issue_18["requirements"]["host"].append("flit")
+    assert "flit" in recipe_for_issue_18["requirements"]["host"]
+
+
 @pytest.mark.parametrize("show_comments", (True,))
 def test_ingredients_list_insert(comment_yaml, show_comments):
     comment_yaml.show_comments = show_comments

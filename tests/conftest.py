@@ -23,3 +23,8 @@ def simple_yaml(path_data):
 @pytest.fixture
 def comment_yaml(path_data):
     return Recipe(load_file=path_data / "comment.yaml")
+
+
+@pytest.fixture
+def recipe_for_issue_18(path_data):
+    return Recipe(load_file=path_data / "issue_18.yaml")
