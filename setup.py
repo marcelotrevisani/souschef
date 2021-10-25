@@ -17,7 +17,7 @@ setup(
     package_data={"": ["LICENSE", "AUTHORS"]},
     package_dir={"": "src"},
     include_package_data=True,
-    python_requires=">=3.7",
+    python_requires=">=3.8",
     install_requires=["ruamel.yaml >=0.15.3", "ruamel.yaml.jinja2"],
     extras_require={"testing": ["pytest", "mock", "pytest-cov"]},
     url="https://github.com/marcelotrevisani/souschef",
