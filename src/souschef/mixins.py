@@ -252,8 +252,8 @@ class GetSetItemMixin:
                 pos_yaml,
                 after=comments,
             )
-        if list_comments[-1].strip() == "":
-            self[-1].value += f"{Comment.NEW_LINE}{list_comments[-1]}"
+            if list_comments[-1].strip() == "":
+                self[-1].value += f"{Comment.NEW_LINE}{list_comments[-1]}"
 
     def __add_comment_to_list(self, pos, value):
         if isinstance(self[pos], Comment):
