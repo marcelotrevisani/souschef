@@ -42,7 +42,7 @@ class IngredientList(
         self._config = weakref.ref(config)
 
     def __repr__(self) -> str:
-        return f"{self._key}: {str(self)}"
+        return f"{self._key}: {self}"
 
     def __str__(self) -> str:
         return str(_get_list_repr(self._yaml(), self._config()))
