@@ -19,13 +19,17 @@ class Section(
         parent: CommentedMap,
         config,
     ):
+        self.__yaml = weakref.ref(item)
         self._parent = weakref.ref(parent)
-        self._yaml = weakref.ref(item)
         self._config = weakref.ref(config)
         self._name = name
 
     def __repr__(self) -> str:
         return f"<Section {self._name}>"
+
+    @property
+    def _yaml(self):
+        return self.__yaml()
 
     def __str__(self) -> str:
         return self._name

@@ -13,8 +13,8 @@ class InlineCommentMixin:
         from souschef.ingredient import Ingredient
 
         if isinstance(self, Ingredient):
-            return self._yaml().ca.items[self._id]
-        return self._yaml().ca.comment
+            return self._yaml.ca.items[self._id]
+        return self._yaml.ca.comment
 
     @property
     def inline_comment(self) -> Optional[Comment]:
@@ -33,18 +33,18 @@ class InlineCommentMixin:
 
         try:
             if isinstance(self, Ingredient):
-                all_comments = self._yaml().ca.items[self._id][0]
+                all_comments = self._yaml.ca.items[self._id][0]
             else:
-                all_comments = self._yaml().ca.comment[0]
+                all_comments = self._yaml.ca.comment[0]
             if all_comments.value is None:
                 raise AttributeError
         except (TypeError, AttributeError, IndexError, KeyError):
             from souschef.ingredient import Ingredient
 
             if isinstance(self, Ingredient):
-                self._yaml().yaml_add_eol_comment(comment, key=self._id, column=0)
+                self._yaml.yaml_add_eol_comment(comment, key=self._id, column=0)
             else:
-                self._yaml().yaml_add_eol_comment(comment, column=0)
+                self._yaml.yaml_add_eol_comment(comment, column=0)
         else:
             list_comments = all_comments.value.split("\n")
             if len(list_comments) <= 1:
@@ -73,7 +73,7 @@ class ConstrainMixin:
     @property
     def constrain(self) -> str:
         try:
-            all_constrains = self._yaml()[self._id].strip().split()[1:]
+            all_constrains = self._yaml[self._id].strip().split()[1:]
             return " ".join(all_constrains)
         except (IndexError, AttributeError):
             return ""
@@ -82,8 +82,8 @@ class ConstrainMixin:
     def constrain(self, values: Union[str, List[str]]):
         if isinstance(values, list):
             values = ",".join(values)
-        pkg = self._yaml()[self._id].strip().split()[0]
-        self._yaml()[self._id] = f"{pkg} {values.strip()}".strip()
+        pkg = self._yaml[self._id].strip().split()[0]
+        self._yaml[self._id] = f"{pkg} {values.strip()}".strip()
 
 
 def _get_elements_and_comments(yaml, config: RecipeConfiguration) -> List:
@@ -164,28 +164,21 @@ def _get_root_comments(yaml) -> List:
 
 class GetSetItemMixin:
     def __getitem__(self, item):
-        yaml = self._get_yaml()
-
         if isinstance(item, (int, slice)):
-            return _get_list_repr(yaml, self._config())[item]
+            return _get_list_repr(self._yaml, self._config())[item]
 
         recipe_item = (
-            yaml.get(item, None) if isinstance(yaml, CommentedMap) else yaml[item]
+            self._yaml.get(item, None)
+            if isinstance(self._yaml, CommentedMap)
+            else self._yaml[item]
         )
         if recipe_item is None:
             return KeyError(f"Index {item} does not exist. Try to create it first.")
-        return convert_to_abstract_repr(recipe_item, item, yaml, self._config())
-
-    def _get_yaml(self):
-        try:
-            return self._yaml()
-        except TypeError:
-            return self._yaml
+        return convert_to_abstract_repr(recipe_item, item, self._yaml, self._config())
 
     def __setitem__(self, key, value):
-        yaml = self._get_yaml()
         if not isinstance(key, int) or self._config().show_comments:
-            yaml[key] = CommentedMap(value) if isinstance(value, dict) else value
+            self._yaml[key] = CommentedMap(value) if isinstance(value, dict) else value
             return
 
         num_comments = 0
@@ -199,7 +192,7 @@ class GetSetItemMixin:
                 num_comments += 1
             else:
                 key_pivot -= 1
-        yaml[key - num_comments] = value
+        self._yaml[key - num_comments] = value
 
     def __delitem__(self, key):
         from souschef.comment import Comment
@@ -207,7 +200,7 @@ class GetSetItemMixin:
         if isinstance(self[key], Comment):
             self[key].remove()
         else:
-            del self._get_yaml()[key]
+            del self._yaml[key]
 
     def insert(self, index, value):
         from souschef.comment import Comment
@@ -217,7 +210,7 @@ class GetSetItemMixin:
             index = len(self) + index
 
         if self._config().show_comments is False:
-            self._get_yaml().insert(index, value)
+            self._yaml.insert(index, value)
         else:
             pos = max(0, index - 1)
             if is_comment:
@@ -233,7 +226,7 @@ class GetSetItemMixin:
         for p in reversed(range(len(list_comments))):
             del self[index + p]
 
-        self._get_yaml().insert(pos_yaml, value)
+        self._yaml.insert(pos_yaml, value)
         self.__re_add_comments(Comment, list_comments, pos_yaml)
 
     def __get_all_comments_after_position(self, Comment, index):
@@ -248,7 +241,7 @@ class GetSetItemMixin:
     def __re_add_comments(self, Comment, list_comments, pos_yaml):
         comments = f"{Comment.NEW_LINE}".join(list_comments) if list_comments else None
         if list_comments:
-            self._get_yaml().yaml_set_comment_before_after_key(
+            self._yaml.yaml_set_comment_before_after_key(
                 pos_yaml,
                 after=comments,
             )
@@ -266,16 +259,16 @@ def _get_comment_from_obj(obj_repr):
     try:
         key = obj_repr._id
         try:
-            comment = obj_repr._yaml().ca.items[key]
+            comment = obj_repr._yaml.ca.items[key]
         except KeyError:
-            obj_repr._yaml().yaml_add_eol_comment("\n", key=key, column=0)
-            comment = obj_repr._yaml().ca.items[key]
+            obj_repr._yaml.yaml_add_eol_comment("\n", key=key, column=0)
+            comment = obj_repr._yaml.ca.items[key]
             comment[0].value = "\n"
     except AttributeError:
         try:
-            ca_obj = obj_repr._yaml()[obj_repr._name]
+            ca_obj = obj_repr._yaml[obj_repr._name]
         except AttributeError:
-            ca_obj = obj_repr._yaml()
+            ca_obj = obj_repr._yaml
         if ca_obj.ca.comment is None:
             ca_obj.yaml_add_eol_comment("\n", column=0)
         comment = ca_obj.ca.comment
