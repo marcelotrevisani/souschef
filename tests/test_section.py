@@ -8,6 +8,13 @@ def test_add_new_section(pure_yaml):
     assert "abc" in pure_yaml
 
 
+def test_add_new_section_using_method(pure_yaml):
+    assert "new_section" not in pure_yaml
+    pure_yaml.add_section({"new_section": "value new section"})
+
+    assert "value new section" == pure_yaml["new_section"]
+
+
 def test_ingredient_repr(comment_yaml):
     assert repr(comment_yaml["version"]) == "version: 3"
 
