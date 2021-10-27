@@ -55,15 +55,15 @@ class IngredientList(
     def __str__(self) -> str:
         return str(_get_list_repr(self._yaml, self._config()))
 
-    def __eq__(self, other) -> bool:  # sourcery skip: invert-any-all, use-any
+    def __eq__(self, other) -> bool:
         if len(other) != len(self):
             return False
-        for ingredient, element in zip(
-            _get_list_repr(self._yaml, self._config()), other
-        ):
-            if ingredient != element:
-                return False
-        return True
+        return all(
+            ingredient == element
+            for ingredient, element in zip(
+                _get_list_repr(self._yaml, self._config()), other
+            )
+        )
 
     def __iter__(self) -> Iterable:
         return iter(_get_list_repr(self._yaml, self._config()))
