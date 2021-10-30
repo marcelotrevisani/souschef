@@ -76,3 +76,9 @@ class IngredientList(
 
     def append(self, value):
         self.insert(0, value)
+
+    def replace(self, current_value: str, new_value: str):
+        for pos, item in enumerate(self):
+            if item == current_value:
+                self[pos].value = new_value
+                break

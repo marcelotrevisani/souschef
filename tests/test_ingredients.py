@@ -58,3 +58,12 @@ def test_ingredients_list_insert_comment_between_items(comment_yaml):
 def test_insert_comment_at_the_end(comment_yaml):
     comment_yaml["requirements"]["host"].insert(-1, "# MY COMMENT")
     assert comment_yaml["requirements"]["host"][-2] == "MY COMMENT"
+
+
+def test_replace_ingredients_list(comment_yaml):
+    assert "val1" in comment_yaml["requirements"]["host"]
+    assert "new value 1" not in comment_yaml["requirements"]["host"]
+
+    comment_yaml["requirements"]["host"].replace("val1", "new value 1")
+    assert "val1" not in comment_yaml["requirements"]["host"]
+    assert "new value 1" in comment_yaml["requirements"]["host"]
