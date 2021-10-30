@@ -1,4 +1,5 @@
 import re
+from functools import singledispatchmethod
 from typing import List, Optional, Union
 
 from ruamel.yaml.comments import CommentedMap, CommentedSeq
@@ -277,6 +278,11 @@ def _get_comment_from_obj(obj_repr):
 
 
 class AddSection:
-    def add_section(self, section_dict: dict):
-        for key, value in section_dict.items():
+    @singledispatchmethod
+    def add_section(self, section: dict):
+        for key, value in section.items():
             self._yaml[key] = CommentedMap(value) if isinstance(value, dict) else value
+
+    @add_section.register
+    def add_section_str(self, section: str):
+        self._yaml[section] = CommentedMap()
