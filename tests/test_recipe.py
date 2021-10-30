@@ -143,13 +143,24 @@ def test_iter_as_dict_recipe(simple_yaml):
     ]
 
 
-def test_add_section():
+def test_add_section_dict():
     recipe = Recipe(name="my_recipe")
     recipe.add_section(
         {"requirements": {"run": ["numpy", "python"], "host": {"python", "pip"}}}
     )
     assert set(recipe["requirements"]["run"]) == {"numpy", "python"}
     assert set(recipe["requirements"]["host"]) == {"python", "pip"}
+
+
+def test_add_section_str():
+    recipe = Recipe(name="my_recipe")
+    assert "NEW_SECTION" not in recipe
+    recipe.add_section("NEW_SECTION")
+    assert "NEW_SECTION" in set(recipe.keys())
+
+    assert not recipe["NEW_SECTION"].value
+    recipe["NEW_SECTION"] = "VALUE FOR NEW_SECTION"
+    assert recipe["NEW_SECTION"] == "VALUE FOR NEW_SECTION"
 
 
 def test_save_recipe(tmp_path):
