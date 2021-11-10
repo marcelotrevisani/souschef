@@ -71,3 +71,8 @@ def test_replace_ingredients_list(comment_yaml):
 
 def test_ingredient_contains(simple_full_recipe):
     assert any("elmd" in i for i in simple_full_recipe["requirements"]["run"])
+
+
+def test_list_ingredient_contains(simple_full_recipe):
+    assert "elmd" in simple_full_recipe["requirements"]["run"]
+    assert "FOOBAR" not in simple_full_recipe["requirements"]["run"]

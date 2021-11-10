@@ -72,7 +72,11 @@ class IngredientList(
         return iter(_get_list_repr(self._yaml, self._config()))
 
     def __contains__(self, item) -> bool:
-        return item in _get_list_repr(self._yaml, self._config())
+        return any(
+            item in value
+            for value in _get_list_repr(self._yaml, self._config())
+            if isinstance(value, Ingredient)
+        )
 
     def __len__(self) -> int:
         return len(_get_list_repr(self._yaml, self._config()))
