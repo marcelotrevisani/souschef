@@ -1,5 +1,7 @@
 from dataclasses import dataclass
 
+NEW_LINE = "\n"
+
 
 @dataclass
 class RecipeConfiguration:

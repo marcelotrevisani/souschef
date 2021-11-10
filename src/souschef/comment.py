@@ -3,17 +3,17 @@ from typing import List
 
 from ruamel.yaml import CommentToken
 
+from souschef.config import NEW_LINE
+
 
 class Comment:
-    NEW_LINE = "\n"
-
     def __init__(self, yaml, pos: int = 0):
         self._yaml = yaml
         self.__pos = pos
 
     @property
     def raw_value(self) -> str:
-        return self._yaml.value.split(self.NEW_LINE)[self.__pos]
+        return self._yaml.value.split(NEW_LINE)[self.__pos]
 
     @raw_value.setter
     def raw_value(self, val: str):
@@ -21,7 +21,7 @@ class Comment:
 
     @property
     def value(self) -> str:
-        all_values = self._yaml.value.split(self.NEW_LINE)
+        all_values = self._yaml.value.split(NEW_LINE)
         if not all_values:
             return ""
         re_comment = re.search(r"^\s*#\s*(.*)", all_values[self.__pos], re.DOTALL)
@@ -38,15 +38,15 @@ class Comment:
         if re_comment.search(new_value) is None:
             new_value = f"# {new_value}"
 
-        all_values = self._yaml.value.split(self.NEW_LINE)
+        all_values = self._yaml.value.split(NEW_LINE)
         all_values = all_values[:-1] if not all_values[-1] else all_values
         all_values[self.__pos] = new_value
-        self._yaml.value = f"{self.NEW_LINE.join(all_values)}\n"
+        self._yaml.value = f"{NEW_LINE.join(all_values)}\n"
 
     def remove(self):
-        all_values = self._yaml.value.split(self.NEW_LINE)
+        all_values = self._yaml.value.split(NEW_LINE)
         del all_values[self.__pos]
-        self._yaml.value = f"{self.NEW_LINE.join(all_values)}"
+        self._yaml.value = f"{NEW_LINE.join(all_values)}"
 
     def __repr__(self) -> str:
         return repr(self.raw_value)

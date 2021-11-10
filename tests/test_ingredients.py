@@ -67,3 +67,7 @@ def test_replace_ingredients_list(comment_yaml):
     comment_yaml["requirements"]["host"].replace("val1", "new value 1")
     assert "val1" not in comment_yaml["requirements"]["host"]
     assert "new value 1" in comment_yaml["requirements"]["host"]
+
+
+def test_foo(simple_full_recipe):
+    simple_full_recipe[0]
