@@ -5,7 +5,7 @@ from typing import List, Optional, Union
 from ruamel.yaml.comments import CommentedMap, CommentedSeq
 
 from souschef.comment import Comment, comment_factory
-from souschef.config import RecipeConfiguration
+from souschef.config import NEW_LINE, RecipeConfiguration
 from souschef.tools import convert_to_abstract_repr
 
 
@@ -228,7 +228,7 @@ class GetSetItemMixin:
             del self[index + p]
 
         self._yaml.insert(pos_yaml, value)
-        self.__re_add_comments(Comment, list_comments, pos_yaml)
+        self.__re_add_comments(list_comments, pos_yaml)
 
     def __get_all_comments_after_position(self, Comment, index):
         list_comments = []
@@ -239,21 +239,21 @@ class GetSetItemMixin:
                 break
         return list_comments
 
-    def __re_add_comments(self, Comment, list_comments, pos_yaml):
-        comments = f"{Comment.NEW_LINE}".join(list_comments) if list_comments else None
+    def __re_add_comments(self, list_comments, pos_yaml):
+        comments = f"{NEW_LINE}".join(list_comments) if list_comments else None
         if list_comments:
             self._yaml.yaml_set_comment_before_after_key(
                 pos_yaml,
                 after=comments,
             )
             if list_comments[-1].strip() == "":
-                self[-1].value += f"{Comment.NEW_LINE}{list_comments[-1]}"
+                self[-1].value += f"{NEW_LINE}{list_comments[-1]}"
 
     def __add_comment_to_list(self, pos, value):
         if isinstance(self[pos], Comment):
-            self[pos].value += f"{Comment.NEW_LINE}{value}"
+            self[pos].value += f"{NEW_LINE}{value}"
         else:
-            self[pos].inline_comment.value += f"{Comment.NEW_LINE}{value}"
+            self[pos].inline_comment.value += f"{NEW_LINE}{value}"
 
 
 def _get_comment_from_obj(obj_repr):

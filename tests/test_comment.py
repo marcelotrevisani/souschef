@@ -86,3 +86,7 @@ def test_inline_comment(path_data, tmpdir):
 foo_bar: 1
 """
     )
+
+
+def test_jinja_yaml(simple_full_recipe):
+    assert simple_full_recipe[0]

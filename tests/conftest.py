@@ -27,4 +27,9 @@ def comment_yaml(path_data):
 
 @pytest.fixture
 def simple_full_recipe(path_data):
-    return Recipe(load_file=path_data / "issue_18.yaml")
+    return Recipe(load_file=path_data / "simple_full_recipe.yaml")
+
+
+@pytest.fixture
+def multiple_jinja_var_same_line(path_data):
+    return Recipe(load_file=path_data / "multiple_jinja_var_same_line.yaml")
