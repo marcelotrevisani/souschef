@@ -69,5 +69,5 @@ def test_replace_ingredients_list(comment_yaml):
     assert "new value 1" in comment_yaml["requirements"]["host"]
 
 
-def test_foo(simple_full_recipe):
-    simple_full_recipe[0]
+def test_ingredient_contains(simple_full_recipe):
+    assert any("elmd" in i for i in simple_full_recipe["requirements"]["run"])

@@ -33,6 +33,9 @@ class Ingredient(mixins.SelectorMixin, mixins.InlineCommentMixin):
     def __eq__(self, other) -> bool:
         return self.value == other
 
+    def __contains__(self, item):
+        return item in self.value
+
 
 class IngredientList(
     mixins.SelectorMixin,
