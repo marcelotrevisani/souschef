@@ -1,5 +1,6 @@
+import re
 import weakref
-from typing import Any, Iterable, MutableSequence, Union
+from typing import Any, Iterable, List, MutableSequence, Union
 
 from souschef import mixins
 from souschef.config import RecipeConfiguration
@@ -35,6 +36,25 @@ class Ingredient(mixins.SelectorMixin, mixins.InlineCommentMixin):
 
     def __contains__(self, item):
         return item in self.value
+
+    @property
+    def constrains(self) -> List[str]:
+        all_val = re.split(r"\s+", self.value)
+        if len(all_val) <= 1:
+            return []
+        return all_val[1].split(",")
+
+    @constrains.setter
+    def constrains(self, value: str):
+        self.value = re.sub(r"^(\s*\w+).*", f"\\1  {value}", self.value)
+
+    @property
+    def package_name(self):
+        return re.split(r"\s+", self.value)[0]
+
+    @package_name.setter
+    def package_name(self, value: str):
+        self.value = re.sub(r"^(\s*)\w+(.*)", f"\\1{value}\\2", self.value)
 
 
 class IngredientList(

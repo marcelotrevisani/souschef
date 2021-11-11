@@ -76,3 +76,25 @@ def test_ingredient_contains(simple_full_recipe):
 def test_list_ingredient_contains(simple_full_recipe):
     assert "elmd" in simple_full_recipe["requirements"]["run"]
     assert "FOOBAR" not in simple_full_recipe["requirements"]["run"]
+
+
+def test_get_constrains(simple_full_recipe):
+    assert simple_full_recipe["requirements"]["run"][0].constrains == ["==0.4.8"]
+
+
+def test_set_constrains(simple_full_recipe):
+    simple_full_recipe["requirements"]["run"][0].constrains = ">=1.2.3,<2.0.0"
+    assert simple_full_recipe["requirements"]["run"][0].constrains == [
+        ">=1.2.3",
+        "<2.0.0",
+    ]
+
+
+def test_get_package_name(simple_full_recipe):
+    assert simple_full_recipe["requirements"]["run"][0].package_name == "elmd"
+    assert simple_full_recipe["requirements"]["run"][1].package_name == "hdbscan"
+
+
+def test_set_package_name(simple_full_recipe):
+    simple_full_recipe["requirements"]["run"][0].package_name = "pytest"
+    assert simple_full_recipe["requirements"]["run"][0].package_name == "pytest"
