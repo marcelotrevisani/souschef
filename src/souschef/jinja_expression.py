@@ -45,7 +45,7 @@ def set_global_jinja_var(recipe: Recipe, var_name: str, new_value: Union[str, in
         if found_var:
             item.raw_value = "".join(result)
             return
-    all_jinja_exp[-1].raw_value += f'\n#% set {var_name} = "{new_value}"'
+    all_jinja_exp[-1].raw_value += f'\n#% set {var_name} = "{new_value}" %}}'
 
 
 def get_global_jinja_var(recipe: Recipe, var_name: str) -> str:
