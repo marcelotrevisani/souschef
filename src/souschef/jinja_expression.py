@@ -17,10 +17,19 @@ def is_jinja_expression(recipe_item):
     return False
 
 
-def set_global_jinja_var(recipe: Recipe, var_name: str, new_value: Union[str, int]):
+def get_all_jinja_expression(recipe: Recipe):
     for item in recipe:
-        if not is_jinja_expression(item):
-            continue
+        if is_jinja_expression(item):
+            yield item
+
+
+def set_global_jinja_var(recipe: Recipe, var_name: str, new_value: Union[str, int]):
+    all_jinja_exp = list(get_all_jinja_expression(recipe))
+    if not all_jinja_exp:
+        recipe.yaml.yaml_set_start_comment("NEW VALUE")
+        recipe.yaml.ca.comment[1][0].value = f'#% set {var_name} = "{new_value}" %}}\n'
+        return
+    for item in all_jinja_exp:
         all_jinja = RE_CHECK_JINJA.split(item.raw_value)
         result = []
         found_var = False
@@ -36,9 +45,7 @@ def set_global_jinja_var(recipe: Recipe, var_name: str, new_value: Union[str, in
         if found_var:
             item.raw_value = "".join(result)
             return
-    raise ValueError(
-        f"It was not possible to find the requested jinja variable '{var_name}'."
-    )
+    all_jinja_exp[-1].raw_value += f'\n#% set {var_name} = "{new_value}"'
 
 
 def get_global_jinja_var(recipe: Recipe, var_name: str) -> str:

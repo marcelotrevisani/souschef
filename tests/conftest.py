@@ -11,6 +11,11 @@ def path_data() -> Path:
 
 
 @pytest.fixture(scope="function")
+def pure_yaml_with_comments(path_data):
+    return Recipe(load_file=path_data / "pure.yaml", show_comments=True)
+
+
+@pytest.fixture(scope="function")
 def pure_yaml(path_data):
     return Recipe(load_file=path_data / "pure.yaml", show_comments=False)
 
