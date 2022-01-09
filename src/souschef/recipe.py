@@ -72,3 +72,7 @@ class Recipe(mixins.GetSetItemMixin, mixins.InlineCommentMixin, mixins.AddSectio
             raise ValueError("Please inform a valid path to export the recipe.")
         with open(path_file, "w") as recipe:
             yaml.dump(self._yaml, recipe)
+
+    @property
+    def yaml(self):
+        return self._yaml

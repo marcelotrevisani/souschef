@@ -5,6 +5,11 @@ from souschef.jinja_expression import (
 )
 
 
+def test_add_jinja_var(pure_yaml_with_comments):
+    set_global_jinja_var(pure_yaml_with_comments, "version", "10.9.8")
+    assert get_global_jinja_var(pure_yaml_with_comments, "version") == "10.9.8"
+
+
 def test_is_jinja_expression(simple_full_recipe):
     assert is_jinja_expression(simple_full_recipe[0])
     assert not is_jinja_expression(simple_full_recipe[-1])
