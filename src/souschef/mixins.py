@@ -68,8 +68,7 @@ class SelectorMixin(InlineCommentMixin):
     def selector(self, selector_value: str):
         self.inline_comment = f"[{selector_value}]"
         yaml_comment = self._get_yaml_comment()[0] or self._get_yaml_comment()[2]
-        yaml_comment.value = yaml_comment.value.replace("'", "")
-        yaml_comment.value = f" {yaml_comment.value}"
+        yaml_comment.value = "  " + yaml_comment.value.replace("'", "")
 
 
 class ConstrainMixin:

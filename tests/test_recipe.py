@@ -69,6 +69,7 @@ def test_get_set_constrain(path_data, tmpdir):
     recipe["requirements"]["host"][2] = "pytest <=5.0.1"
 
     assert recipe["requirements"]["host"] == ["python", "pip", "pytest <=5.0.1"]
+    recipe["requirements"]["host"][2].selector = "py2k"
 
     constrain_folder = tmpdir.mkdir("constrain-output")
     with open(constrain_folder / "output_constrain.yaml", "w") as f:
@@ -82,7 +83,7 @@ def test_get_set_constrain(path_data, tmpdir):
   host:
   - python
   - pip
-  - pytest <=5.0.1
+  - pytest <=5.0.1   # [py2k]
 """
     )
 
