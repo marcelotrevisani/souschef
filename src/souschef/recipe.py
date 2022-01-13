@@ -47,7 +47,7 @@ class Recipe(mixins.GetSetItemMixin, mixins.InlineCommentMixin, mixins.AddSectio
         return item in list(self.keys())
 
     def keys(self) -> Generator:
-        yield from self._yaml.keys()
+        yield from self.yaml.keys()
 
     def values(self) -> Generator:
         for section in self.keys():
@@ -71,7 +71,7 @@ class Recipe(mixins.GetSetItemMixin, mixins.InlineCommentMixin, mixins.AddSectio
         if path_file is None:
             raise ValueError("Please inform a valid path to export the recipe.")
         with open(path_file, "w") as recipe:
-            yaml.dump(self._yaml, recipe)
+            yaml.dump(self.yaml, recipe)
 
     @property
     def yaml(self):

@@ -23,7 +23,7 @@ def test_add_inline_comment(pure_yaml):
     pure_yaml["source"].inline_comment = "inline comment"
     assert pure_yaml["source"].inline_comment == "inline comment"
     assert pure_yaml["source"].inline_comment.value == "inline comment"
-    assert pure_yaml["source"].inline_comment.raw_value == "# inline comment"
+    assert pure_yaml["source"].inline_comment.raw_value == " # inline comment"
 
 
 def test_comment(comment_yaml):
@@ -63,13 +63,13 @@ def test_inline_comment(path_data, tmpdir):
     assert recipe["foo_section"].inline_comment is None
 
     recipe["foo_section"].inline_comment = "FOO INLINE COMMENT"
-    assert recipe["foo_section"].inline_comment == "# FOO INLINE COMMENT"
+    assert recipe["foo_section"].inline_comment == " # FOO INLINE COMMENT"
     recipe["foo_section"].inline_comment = "FOO COMMENT 2"
     assert recipe["foo_section"].inline_comment == "# FOO COMMENT 2"
 
     assert recipe["foo_section"]["bar_section"][0].inline_comment is None
     recipe["foo_section"]["bar_section"][0].inline_comment = "INLINE VAL1"
-    assert recipe["foo_section"]["bar_section"][0].inline_comment == "# INLINE VAL1"
+    assert recipe["foo_section"]["bar_section"][0].inline_comment == " # INLINE VAL1"
 
     output_folder = tmpdir.mkdir("inline-comment.yaml-output")
     with open(output_folder / "output_constrain.yaml", "w") as f:
@@ -79,9 +79,9 @@ def test_inline_comment(path_data, tmpdir):
         content = f.read()
     assert (
         content
-        == """foo_section: # FOO COMMENT 2
+        == """foo_section:  # FOO COMMENT 2
   bar_section:
-  - val1 # INLINE VAL1
+  - val1  # INLINE VAL1
   - val2
 foo_bar: 1
 """
