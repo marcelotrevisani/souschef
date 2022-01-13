@@ -1,6 +1,6 @@
 import re
 import weakref
-from typing import Any, Iterable, List, MutableSequence, Union
+from typing import Any, Iterable, MutableSequence, Union
 
 from souschef import mixins
 from souschef.config import RecipeConfiguration
@@ -8,7 +8,7 @@ from souschef.mixins import _get_list_repr
 
 
 class Ingredient(mixins.SelectorMixin, mixins.InlineCommentMixin):
-    def __init__(self, parent, position):
+    def __init__(self, parent, position=0):
         self.__yaml = weakref.ref(parent)
         self._id = position
 
@@ -17,19 +17,22 @@ class Ingredient(mixins.SelectorMixin, mixins.InlineCommentMixin):
             return str(self.value)
         return f"{self._id}: {self.value}"
 
+    def __hash__(self):
+        return hash(self.yaml[self._id])
+
     @property
-    def _yaml(self):
+    def yaml(self):
         return self.__yaml()
 
     @property
     def value(self) -> Any:
         if self._id is None:
-            return self._yaml
-        return self._yaml[self._id]
+            return self.yaml
+        return self.yaml[self._id]
 
     @value.setter
     def value(self, val: Any):
-        self._yaml[self._id] = val
+        self.yaml[self._id] = val
 
     def __eq__(self, other) -> bool:
         return self.value == other
@@ -38,11 +41,14 @@ class Ingredient(mixins.SelectorMixin, mixins.InlineCommentMixin):
         return item in self.value
 
     @property
-    def constrains(self) -> List[str]:
-        all_val = re.split(r"\s+", self.value)
-        if len(all_val) <= 1:
-            return []
-        return all_val[1].split(",")
+    def constrains(self) -> str:
+        all_val = re.match(r"\s*(.*?)\s+(.*)", self.value)
+        if not all_val:
+            return ""
+        all_val = all_val.groups()
+        if len(all_val) < 2:
+            return ""
+        return re.sub(r".*(\s*#.*)", "", all_val[1]) if all_val[1].strip() else ""
 
     @constrains.setter
     def constrains(self, value: str):
@@ -68,15 +74,18 @@ class IngredientList(
         self._config = weakref.ref(config)
         self.__yaml = weakref.ref(parent_yaml)
 
+    def __hash__(self):
+        return hash(self.value)
+
     @property
-    def _yaml(self):
+    def yaml(self):
         return self.__yaml()
 
     def __repr__(self) -> str:
         return f"{self._key}: {self}"
 
     def __str__(self) -> str:
-        return str(_get_list_repr(self._yaml, self._config()))
+        return str(_get_list_repr(self.yaml, self._config()))
 
     def __eq__(self, other) -> bool:
         if len(other) != len(self):
@@ -84,25 +93,25 @@ class IngredientList(
         return all(
             ingredient == element
             for ingredient, element in zip(
-                _get_list_repr(self._yaml, self._config()), other
+                _get_list_repr(self.yaml, self._config()), other
             )
         )
 
     def __iter__(self) -> Iterable:
-        return iter(_get_list_repr(self._yaml, self._config()))
+        return iter(_get_list_repr(self.yaml, self._config()))
 
     def __contains__(self, item) -> bool:
         return any(
             item in value
-            for value in _get_list_repr(self._yaml, self._config())
+            for value in _get_list_repr(self.yaml, self._config())
             if isinstance(value, Ingredient)
         )
 
     def __len__(self) -> int:
-        return len(_get_list_repr(self._yaml, self._config()))
+        return len(_get_list_repr(self.yaml, self._config()))
 
     def append(self, value):
-        self.insert(0, value)
+        self.insert(len(self), value)
 
     def replace(self, current_value: str, new_value: str):
         for pos, item in enumerate(self):

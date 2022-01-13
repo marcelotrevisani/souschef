@@ -1,3 +1,4 @@
+import re
 from functools import singledispatch
 from typing import Union
 
@@ -50,3 +51,11 @@ def convert_to_abstract_repr_int(
     from souschef.ingredient import Ingredient
 
     return Ingredient(parent=yaml, position=name)
+
+
+def parse_value(value):
+    selector = ""
+    if isinstance(value, str) and "#" in value:
+        re_match = re.match(r"(.*?)\s*#(.*)", value)
+        value, selector = re_match.groups()
+    return value, selector

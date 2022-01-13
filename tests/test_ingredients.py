@@ -79,15 +79,12 @@ def test_list_ingredient_contains(simple_full_recipe):
 
 
 def test_get_constrains(simple_full_recipe):
-    assert simple_full_recipe["requirements"]["run"][0].constrains == ["==0.4.8"]
+    assert simple_full_recipe["requirements"]["run"][0].constrains == "==0.4.8"
 
 
 def test_set_constrains(simple_full_recipe):
     simple_full_recipe["requirements"]["run"][0].constrains = ">=1.2.3,<2.0.0"
-    assert simple_full_recipe["requirements"]["run"][0].constrains == [
-        ">=1.2.3",
-        "<2.0.0",
-    ]
+    assert simple_full_recipe["requirements"]["run"][0].constrains == ">=1.2.3,<2.0.0"
 
 
 def test_get_package_name(simple_full_recipe):

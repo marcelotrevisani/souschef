@@ -83,7 +83,7 @@ def test_get_set_constrain(path_data, tmpdir):
   host:
   - python
   - pip
-  - pytest <=5.0.1   # [py2k]
+  - pytest <=5.0.1  # [py2k]
 """
     )
 
