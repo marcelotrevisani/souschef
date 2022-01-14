@@ -126,3 +126,16 @@ def test_add_section_value_and_inline_comment():
     recipe["skip"].inline_comment = "NEW COMMENT"
     assert recipe["skip"] == 34
     assert recipe["skip"].inline_comment == "NEW COMMENT"
+
+
+def test_iterate_over_section(pure_yaml):
+    all_items = list(pure_yaml["test"].items())
+    assert all_items == [("requires", ["pip", "pytest"]), ("commands", ["pytest foo"])]
+
+
+def test_iterate_over_section_keys(pure_yaml):
+    assert pure_yaml["test"].keys() == {"requires", "commands"}
+
+
+def test_iterate_over_section_values(pure_yaml):
+    assert list(pure_yaml["test"].values()) == [["pip", "pytest"], ["pytest foo"]]

@@ -6,7 +6,7 @@ from ruamel.yaml import CommentedSeq
 from ruamel.yaml.comments import CommentedMap
 
 from souschef import mixins
-from souschef.tools import parse_value
+from souschef.tools import convert_to_abstract_repr, parse_value
 
 
 class Section(
@@ -29,6 +29,17 @@ class Section(
 
     def __repr__(self) -> str:
         return f"<Section {self._name}>"
+
+    def items(self):
+        for k, v in self.yaml.items():
+            yield k, convert_to_abstract_repr(v, k, self._parent(), self._config())
+
+    def keys(self):
+        return self.yaml.keys()
+
+    def values(self):
+        for _, val in self.items():
+            yield val
 
     @property
     def yaml(self):
