@@ -2,8 +2,7 @@ import weakref
 from collections import abc
 from typing import Mapping, Union
 
-from ruamel.yaml import CommentedSeq
-from ruamel.yaml.comments import CommentedMap
+from ruamel.yaml.comments import CommentedMap, CommentedSeq
 
 from souschef import mixins
 from souschef.tools import parse_value
