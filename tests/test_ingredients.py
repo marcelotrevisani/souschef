@@ -1,5 +1,7 @@
 import pytest
 
+from souschef.recipe import Recipe
+
 
 def test_append_host(comment_yaml):
     comment_yaml["requirements"]["host"].append("NEW_DEPENDENCY")
@@ -95,3 +97,9 @@ def test_get_package_name(simple_full_recipe):
 def test_set_package_name(simple_full_recipe):
     simple_full_recipe["requirements"]["run"][0].package_name = "pytest"
     assert simple_full_recipe["requirements"]["run"][0].package_name == "pytest"
+
+
+def test_sort_ingredient_list():
+    recipe = Recipe(name="abc")
+    recipe["new_sec"] = ["cde", "fgh", "abc"]
+    assert sorted(recipe["new_sec"]) == ["abc", "cde", "fgh"]

@@ -34,6 +34,9 @@ class Ingredient(mixins.SelectorMixin, mixins.InlineCommentMixin):
     def value(self, val: Any):
         self.yaml[self._id] = val
 
+    def __lt__(self, other):
+        return self.package_name < other.package_name
+
     def __eq__(self, other) -> bool:
         return self.value == other
 

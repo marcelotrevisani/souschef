@@ -139,3 +139,8 @@ def test_iterate_over_section_keys(pure_yaml):
 
 def test_iterate_over_section_values(pure_yaml):
     assert list(pure_yaml["test"].values()) == [["pip", "pytest"], ["pytest foo"]]
+
+
+def test_contains(pure_yaml):
+    assert "test" in pure_yaml
+    assert "requires" in pure_yaml["test"]

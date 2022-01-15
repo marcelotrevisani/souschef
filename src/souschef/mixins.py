@@ -180,7 +180,7 @@ class GetSetItemMixin:
             else self.yaml[item]
         )
         if recipe_item is None:
-            return KeyError(f"Index {item} does not exist. Try to create it first.")
+            return None
         return convert_to_abstract_repr(recipe_item, item, self.yaml, self._config())
 
     def __setitem__(self, key, value):

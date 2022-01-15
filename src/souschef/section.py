@@ -47,6 +47,9 @@ class Section(
     def __str__(self) -> str:
         return self._name
 
+    def __contains__(self, item):
+        return item in self.yaml
+
     @property
     def value(self):
         return [v for v in self]
