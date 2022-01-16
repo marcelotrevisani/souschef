@@ -33,17 +33,18 @@ def set_global_jinja_var(recipe: Recipe, var_name: str, new_value: Union[str, in
         all_jinja = RE_CHECK_JINJA.split(item.raw_value)
         result = []
         found_var = False
-        for pos, single_jinja in enumerate(all_jinja):
+        for single_jinja in all_jinja:
             match_jinja = RE_JINJA_SET_EXPRESSION.match(single_jinja)
             if match_jinja:
                 current_var, current_value = match_jinja.groups()
                 if current_var == var_name:
                     found_var = True
-                    start = "#" if pos == 0 else "{"
-                    single_jinja = f'{start}% set {current_var} = "{new_value}" %}}'
+                    single_jinja = f'#% set {current_var} = "{new_value}" %}}'
             result.append(single_jinja)
         if found_var:
-            item.raw_value = "".join(result)
+            result = "".join(result)
+            result = result.replace("}}#%", "}}\n#%")
+            item.raw_value = result.strip()
             return
     all_jinja_exp[-1].raw_value += f'\n#% set {var_name} = "{new_value}" %}}'
 
