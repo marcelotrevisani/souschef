@@ -69,7 +69,6 @@ def test_section_get_value(pure_yaml):
 
 
 def test_section_add_list_with_selectors(pure_yaml):
-    # pure_yaml.add_section({"req": {"new": ["python >=3.6 # [win]", "pytest"]}})
     pure_yaml["req"] = {"new": ["python >=3.6 # [win]", "pytest"]}
     assert pure_yaml["req"]["new"][0] == "python >=3.6"
     assert pure_yaml["req"]["new"][0].selector == "win"
@@ -144,3 +143,54 @@ def test_iterate_over_section_values(pure_yaml):
 def test_contains(pure_yaml):
     assert "test" in pure_yaml
     assert "requires" in pure_yaml["test"]
+
+
+def test_insert_subsection_key_val(issue_46):
+    issue_46["about"]["doc_url"] = "https://xtal2png.readthedocs.io/"
+    assert issue_46["about"]["doc_url"] == "https://xtal2png.readthedocs.io/"
+
+
+def test_insert_subsection_key_dict(issue_46):
+    issue_46["about"] = {"doc_url": "https://xtal2png.readthedocs.io/"}
+    assert issue_46["about"]["doc_url"] == "https://xtal2png.readthedocs.io/"
+
+
+def test_blank_line_noarch(issue_47, tmp_path):
+    issue_47["build"]["noarch"] = "python"
+    recipe_path = tmp_path / "recipe.yaml"
+    issue_47.save(path_file=recipe_path)
+
+    with open(recipe_path, "r") as recipe:
+        assert (
+            """build:
+  number: 0
+  entry_points:
+    - xtal2png = xtal2png.core:run
+  script: {{ PYTHON }} -m pip install . -vv
+  noarch: python
+
+about:
+  home: url
+"""
+            == recipe.read()
+        )
+
+
+def test_blank_line_at_the_end(issue_47, tmp_path):
+    issue_47["about"]["doc_url"] = "URL"
+    recipe_path = tmp_path / "recipe_end.yaml"
+    issue_47.save(path_file=recipe_path)
+    with open(recipe_path, "r") as recipe:
+        assert (
+            """build:
+  number: 0
+  entry_points:
+    - xtal2png = xtal2png.core:run
+  script: {{ PYTHON }} -m pip install . -vv
+
+about:
+  home: url
+  doc_url: URL
+"""
+            == recipe.read()
+        )

@@ -1,5 +1,6 @@
 import re
 from collections.abc import Mapping, Sequence
+from copy import copy
 from functools import singledispatchmethod
 from typing import List, Optional, Union
 
@@ -195,7 +196,16 @@ class GetSetItemMixin:
                     self[key].append(i)
             else:
                 pkg_info, comment = parse_value(value)
+                last_key = next(reversed(self.yaml)) if self.yaml else None
                 self.yaml[key] = pkg_info
+                if self.yaml.ca.items.get(last_key) and self.yaml.ca.items[last_key][2]:
+                    comment_double = copy(self.yaml.ca.items[last_key][2])
+                    self.yaml.ca.items[last_key][2].value = (
+                        "\n"
+                        + self.yaml.ca.items[last_key][2].value.rsplit("\n\n", 1)[0]
+                    )
+                    self.yaml.ca.items[key] = [None, None, comment_double, None]
+
                 if comment:
                     self[key].inline_comment = comment
             return
@@ -246,6 +256,9 @@ class GetSetItemMixin:
     def insert(self, index, value):
         from souschef.comment import Comment
 
+        if isinstance(value, dict):
+            self = value
+
         is_comment = re.match(r"^\s*#", value) is not None
         if index < 0:
             index = len(self) + index
@@ -258,7 +271,6 @@ class GetSetItemMixin:
                 self.__add_comment_to_list(pos, value)
             else:
                 self.__add_value_right_position(Comment, index, value)
-        # self[index] = value
 
     def __add_value_right_position(self, Comment, index, value):
         pos_yaml = sum(map(lambda x: not isinstance(x, Comment), self[: index + 1]))
