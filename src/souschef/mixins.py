@@ -257,9 +257,10 @@ class GetSetItemMixin:
         from souschef.comment import Comment
 
         if isinstance(value, dict):
-            self = value
+            is_comment = False
+        else:
+            is_comment = re.match(r"^\s*#", value) is not None
 
-        is_comment = re.match(r"^\s*#", value) is not None
         if index < 0:
             index = len(self) + index
 
