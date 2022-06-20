@@ -185,3 +185,10 @@ def test_update_recipe(simple_full_recipe, tmp_path):
 
     loaded_recipe = Recipe(load_file=recipe_path)
     assert "flit" in loaded_recipe["requirements"]["host"]
+
+
+def test_add_list_elements_to_recipe():
+    recipe = Recipe()
+    outputs = [{"name": "package1"}, {"name": "package2"}]
+    recipe["outputs"] = outputs
+    assert recipe["outputs"] == outputs
