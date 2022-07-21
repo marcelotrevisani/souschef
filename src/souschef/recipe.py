@@ -1,3 +1,4 @@
+from copy import copy
 from pathlib import Path
 from typing import Generator, Iterator, Optional, Union
 
@@ -12,12 +13,14 @@ yaml.width = 600
 
 
 class Recipe(mixins.GetSetItemMixin, mixins.InlineCommentMixin, mixins.AddSection):
+    SECTION_ORDER = ("package", "source", "build", "requirements", "test", "about", "extra")
+
     def __init__(
-        self,
-        name: Optional[str] = None,
-        version: Optional[str] = None,
-        load_file: Union[str, Path, None] = None,
-        show_comments: bool = True,
+            self,
+            name: Optional[str] = None,
+            version: Optional[str] = None,
+            load_file: Union[str, Path, None] = None,
+            show_comments: bool = True,
     ):
         if load_file:
             self._yaml = self.__load_recipe(Path(load_file))
@@ -25,6 +28,12 @@ class Recipe(mixins.GetSetItemMixin, mixins.InlineCommentMixin, mixins.AddSectio
             self._yaml = self.__create_yaml(name, version)
         self._path_recipe = load_file
         self.__config = RecipeConfiguration(show_comments=show_comments)
+
+        if not load_file:
+            for section in Recipe.SECTION_ORDER:
+                if section in self:
+                    continue
+                self[section] = {}
 
     def _config(self):
         return self.__config
@@ -70,6 +79,9 @@ class Recipe(mixins.GetSetItemMixin, mixins.InlineCommentMixin, mixins.AddSectio
         path_file = path_file or self._path_recipe
         if path_file is None:
             raise ValueError("Please inform a valid path to export the recipe.")
+        for section, val in copy(self.yaml).items():
+            if not val:
+                del self.yaml[section]
         with open(path_file, "w") as recipe:
             yaml.dump(self.yaml, recipe)
 
