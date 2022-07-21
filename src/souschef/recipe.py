@@ -13,14 +13,22 @@ yaml.width = 600
 
 
 class Recipe(mixins.GetSetItemMixin, mixins.InlineCommentMixin, mixins.AddSection):
-    SECTION_ORDER = ("package", "source", "build", "requirements", "test", "about", "extra")
+    SECTION_ORDER = (
+        "package",
+        "source",
+        "build",
+        "requirements",
+        "test",
+        "about",
+        "extra",
+    )
 
     def __init__(
-            self,
-            name: Optional[str] = None,
-            version: Optional[str] = None,
-            load_file: Union[str, Path, None] = None,
-            show_comments: bool = True,
+        self,
+        name: Optional[str] = None,
+        version: Optional[str] = None,
+        load_file: Union[str, Path, None] = None,
+        show_comments: bool = True,
     ):
         if load_file:
             self._yaml = self.__load_recipe(Path(load_file))
