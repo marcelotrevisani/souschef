@@ -90,3 +90,20 @@ foo_bar: 1
 
 def test_jinja_yaml(simple_full_recipe):
     assert simple_full_recipe[0]
+
+
+def test_comment_in_requirements():
+    recipe = Recipe()
+    data = {
+        "run": [
+            "python >=3.8",
+            "# Extra: diagnostics",
+            "jinja2",
+        ]
+    }
+    recipe["requirements"] = data
+    assert recipe["requirements"]["run"] == [
+        "python >=3.8",
+        "# Extra: diagnostics",
+        "jinja2",
+    ]

@@ -306,6 +306,8 @@ class GetSetItemMixin:
     def __add_comment_to_list(self, pos, value):
         if isinstance(self[pos], Comment):
             self[pos].value += f"{NEW_LINE}{value}"
+        elif self[pos].inline_comment is None:
+            self[pos].inline_comment = f"{NEW_LINE}{value}"
         else:
             self[pos].inline_comment.value += f"{NEW_LINE}{value}"
 
