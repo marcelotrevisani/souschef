@@ -192,3 +192,9 @@ def test_add_list_elements_to_recipe():
     outputs = [{"name": "package1"}, {"name": "package2"}]
     recipe["outputs"] = outputs
     assert recipe["outputs"] == outputs
+
+
+def test_space_inline_comment():
+    recipe = Recipe()
+    recipe["requirements"] = {"run": ["abcd >=3.1,<4.0 # [sel]"]}
+    assert recipe["requirements"]["run"][0].inline_comment.raw_value == " # [sel]"
