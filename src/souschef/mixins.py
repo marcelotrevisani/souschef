@@ -36,7 +36,7 @@ class InlineCommentMixin:
     def inline_comment(self, comment: str):
         from souschef.ingredient import Ingredient
 
-        comment = comment.strip()
+        comment = comment.strip(" ")
         try:
             if isinstance(self, Ingredient):
                 all_comments = self.yaml.ca.items[self._id][0]
