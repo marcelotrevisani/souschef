@@ -1,6 +1,6 @@
 import weakref
 from collections import abc
-from typing import Mapping, Union
+from typing import Any, Union
 
 from ruamel.yaml.comments import CommentedMap, CommentedSeq
 
@@ -55,7 +55,7 @@ class Section(
         return [v for v in self]
 
     @value.setter
-    def value(self, items):
+    def value(self, items: Any):
         if isinstance(items, abc.Mapping):
             for key, value in items.items():
                 self[key] = value
@@ -73,6 +73,5 @@ class Section(
         else:
             self._parent()[self._name] = items
 
-    def update(self, section: Mapping):
-        for k, val in section.items():
-            self[k] = val
+    def update(self, section: Any):
+        self.value = section
