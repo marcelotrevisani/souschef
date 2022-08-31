@@ -19,6 +19,7 @@ class Recipe(mixins.GetSetItemMixin, mixins.InlineCommentMixin, mixins.AddSectio
         "build",
         "requirements",
         "test",
+        "outputs",
         "about",
         "extra",
     )
