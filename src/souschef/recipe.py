@@ -72,10 +72,10 @@ class Recipe(mixins.GetSetItemMixin, mixins.InlineCommentMixin, mixins.AddSectio
             yield self[section]
 
     def __create_yaml(self, name: str, version: Optional[str] = None):
-        content = f'{{% set name = "{name}" %}}\n'
+        content = ""
         if version:
             content += f'{{% set version = "{version}" %}}\n'
-        content += "package:\n    name: {{ name|lower }}\n"
+        content += f'package:\n    name: "{(name or "").lower()}"\n'
         if version:
             content += f'    version: "{version}"\n'
         return yaml.load(content)

@@ -112,9 +112,9 @@ def test_list_repr_str(comment_yaml):
 
 
 def test_create_recipe():
-    recipe = Recipe(name="my-package", version="1.2.3")
+    recipe = Recipe(name="My-Package", version="1.2.3")
     assert recipe["package"]["version"] == "1.2.3"
-    assert recipe["package"]["name"] == "<{ name|lower }}"
+    assert recipe["package"]["name"] == "my-package"
 
 
 def test_check_presence_key(pure_yaml):
