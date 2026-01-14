@@ -1,4 +1,4 @@
-from ruamel.yaml import round_trip_dump
+from ruamel.yaml import YAML
 
 from souschef.recipe import Recipe
 
@@ -73,7 +73,7 @@ def test_inline_comment(path_data, tmpdir):
 
     output_folder = tmpdir.mkdir("inline-comment.yaml-output")
     with open(output_folder / "output_constrain.yaml", "w") as f:
-        round_trip_dump(recipe._yaml, f)
+        YAML().dump(recipe._yaml, f)
 
     with open(output_folder / "output_constrain.yaml", "r") as f:
         content = f.read()
