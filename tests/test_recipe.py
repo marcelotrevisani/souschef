@@ -1,4 +1,4 @@
-from ruamel.yaml import round_trip_dump
+from ruamel.yaml import YAML
 
 from souschef.recipe import Recipe
 
@@ -44,7 +44,7 @@ def test_create_selector(path_data, tmpdir):
 
     recipe["foo_section"].selector = "FOO SELECTOR"
     with open(selector_folder / "output_selector.yaml", "w") as f:
-        round_trip_dump(recipe._yaml, f)
+        YAML().dump(recipe._yaml, f)
 
     with open(selector_folder / "output_selector.yaml", "r") as f:
         content = f.readlines()
@@ -73,7 +73,7 @@ def test_get_set_constrain(path_data, tmpdir):
 
     constrain_folder = tmpdir.mkdir("constrain-output")
     with open(constrain_folder / "output_constrain.yaml", "w") as f:
-        round_trip_dump(recipe._yaml, f)
+        YAML().dump(recipe._yaml, f)
 
     with open(constrain_folder / "output_constrain.yaml", "r") as f:
         content = f.read()
