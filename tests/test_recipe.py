@@ -77,15 +77,12 @@ def test_get_set_constrain(path_data, tmpdir):
 
     with open(constrain_folder / "output_constrain.yaml", "r") as f:
         content = f.read()
-    assert (
-        content
-        == """requirements:
+    assert content == """requirements:
   host:
   - python
   - pip
   - pytest <=5.0.1  # [py2k]
 """
-    )
 
 
 def test_list_repr_str(comment_yaml):

@@ -161,8 +161,7 @@ def test_blank_line_noarch(issue_47, tmp_path):
     issue_47.save(path_file=recipe_path)
 
     with open(recipe_path, "r") as recipe:
-        assert (
-            """build:
+        assert """build:
   number: 0
   entry_points:
     - xtal2png = xtal2png.core:run
@@ -171,9 +170,7 @@ def test_blank_line_noarch(issue_47, tmp_path):
 
 about:
   home: url
-"""
-            == recipe.read()
-        )
+""" == recipe.read()
 
 
 def test_blank_line_at_the_end(issue_47, tmp_path):
@@ -181,8 +178,7 @@ def test_blank_line_at_the_end(issue_47, tmp_path):
     recipe_path = tmp_path / "recipe_end.yaml"
     issue_47.save(path_file=recipe_path)
     with open(recipe_path, "r") as recipe:
-        assert (
-            """build:
+        assert """build:
   number: 0
   entry_points:
     - xtal2png = xtal2png.core:run
@@ -191,6 +187,4 @@ def test_blank_line_at_the_end(issue_47, tmp_path):
 about:
   home: url
   doc_url: URL
-"""
-            == recipe.read()
-        )
+""" == recipe.read()

@@ -77,15 +77,12 @@ def test_inline_comment(path_data, tmpdir):
 
     with open(output_folder / "output_constrain.yaml", "r") as f:
         content = f.read()
-    assert (
-        content
-        == """foo_section:  # FOO COMMENT 2
+    assert content == """foo_section:  # FOO COMMENT 2
   bar_section:
   - val1  # INLINE VAL1
   - val2
 foo_bar: 1
 """
-    )
 
 
 def test_jinja_yaml(simple_full_recipe):
